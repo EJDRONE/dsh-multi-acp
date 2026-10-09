@@ -1,5 +1,37 @@
 # CHANGELOG
 
+## 0.1.29 — 2026-10-10 🟢 **B2：回合进度进诊断行；❌ C 方案（replace 流式）评估后否决**
+
+### C 方案评估：**否决**（先读官方实现，证据如下）
+- `dsh-agent-loop` 的 `surfaceOp` **只有 `'append'`**（4 处：assistant/message、user/message…），**从不 replace**；
+- 全仓唯一写 `op:'replace'` 的是**两个压缩插件**：`dsh-compaction-basic`（`:607,620`）、
+  `dsh-compaction-tool-result-pruner`（`:174`），其类型是 `CompactionResult`
+  （`startSeq/summarySeq/endSeq` + `shadowedRange{start,end}` + `shadowedSeqs[]`）——
+  **replace = 用新内容遮蔽旧事件范围**（压缩），不是"同一条消息原地增长"；
+- 只读校验器（新增 `tmp/verify-surface-contract.mjs`）扫全库 90 会话 / 23182 事件：
+  `append=8584`、`replace=42`，**42/42 都用 `startSeq`/`endSeq`**（不是类型里的 `start`/`end`），
+  且 42/42 带 `sourceEventSeqs`；真实样例 `{op:'replace',startSeq:10,endSeq:135} sourceEventSeqs=[287,288]`
+  —— `sourceEventSeqs` 是**被遮蔽**的事件、`startSeq/endSeq` 是**新摘要**的区间（两个维度，甚至 `end<start`）。
+- ⇒ 若照原设想实现，我们不是"对齐官方"，而是**借用压缩机制改写历史**（会遮蔽用户已看到的内容、
+  UI 按 `Compaction` 渲染）。**故不做**；现在的实现（turn 收尾 append 一条完整 assistant/message）
+  **恰好就是官方做法**。
+- 附带修正：该校验器第一版按"`sourceEventSeqs` 必须落在 `[startSeq,endSeq]` 内"判定，
+  把 6 处**合法**数据判成错误 —— 已改为信息性统计（这也是"先只读验证"的价值）。
+
+### B2：回合进度进引擎行诊断行（本次落地）
+- `lib/engine-runtime.js`：新增 `recordTurnStart/recordToolProgress/recordTurnEnd` +
+  `turnProgressSummary()` + `formatDuration()`，并入 `engineRuntime()` 快照与诊断行：
+  - 运行中：`运行中：第 7 次工具调用 · 最近: execute（12s 前）· 已耗时 3m20s`
+  - 已结束：`上次回合：7 次工具调用 · 耗时 4m01s（completed）`
+- `lib/acp-agent.js`：`_runTurn` 入口 `recordTurnStart`、每次工具首现 `recordToolProgress`、
+  `finally` 里 `recordTurnEnd`。**不写任何会话事件**（零格式风险）。
+- `lib/client.js`：面板打开时每 3s 静默刷新（**仅真实浏览器**；node 单测无 `document`，避免定时器挂住进程），
+  于是"数字在动"= 长任务正在进行。
+- 验收：`tmp/verify-live-flush.mjs` **18/18**（+6：回合开始/两次工具后摘要/诊断行含进度段/
+  回合结束切"上次回合"+原因/`formatDuration` 边界）。
+
+---
+
 ## 0.1.28 — 2026-10-10 🟢 **A18：权限映射结果进诊断行（+ 会话日志复核）**
 
 - **复核** `session-e9a4b3eb`（用户截图那次的会话，preset=`acp-omp`）：
