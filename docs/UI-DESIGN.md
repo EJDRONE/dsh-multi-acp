@@ -206,8 +206,16 @@ AionUi 截图里的 **「绑定此 Agent 的助手 (2)」** 是很有价值的�
 
 **新增于 AionUi 的两块**：
 
-1. **握手诊断行** —— `握手 579 ms · 协议 ACP v1 · 解析失败 0 行 · agent: oh-my-pi 18.3.5`。
-   依据：我们的 `tryConnect()` 已经返回这些（见 `lib/acp-host.js`），且 `AcpClient` 统计 `parseFailures` / `rawLineCount` —— **方言问题的第一现场证据**。
+1. **运行时诊断胶囊**（0.1.30 起；此前是一条长灰字"握手诊断行"）——
+   引擎行现在分三层：**两列信息网格**（可执行体 / 启动 / SKILLS / 权限模式 / 超时）→
+   **能力胶囊**（虚框：`MCP http · session load · opencode 1.2.3 · 579ms`）→
+   **运行时胶囊**（实框，语义色）：
+   `MCP：4 个`(绿/灰) · `引擎命令/技能：12 个`(绿/黄) ·
+   `权限映射：danger-full-access → dont_ask`(生效绿 / 未生效黄) ·
+   `运行中 · 2 次工具调用 · 已耗时 1m35s`(蓝) / `上次回合 …`(灰) · `最近握手 …`(灰)。
+   完全没跑过会话的引擎收成一颗 `尚未跑过会话 · 暂无运行时数据`。
+   依据：我们的 `tryConnect()` 已经返回这些（见 `lib/acp-host.js`）+ `lib/engine-runtime.js` 的运行时快照 —— **方言问题的第一现场证据**。
+   行左侧 3px 状态色条（可用绿 / 不可用黄 / 未安装·停用灰）。
 2. **启动方式（可覆盖）** —— 对应 AionCore 的 `/overrides` = `{ command_override, env_override }`。理由：内置 `commandOverrides.windows` 是本机路径，换机器会失效。
 
 ---

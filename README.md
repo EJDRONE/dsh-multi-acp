@@ -37,7 +37,7 @@
 | **MCP 随会话注入** | `lib/mcp-servers.js` | `session.mcp {count:4}`；omp 侧 `0.mcp__weknora_dc328ba5_*.log`；Command Code 探针实调 `mcp__weknora-dc328ba5__list_knowledge_bases` 并返回真实知识库名 |
 | **引擎工具调用回显（A1）** | `lib/acp-agent.js` | 轨迹里 `tool/call` + `tool/result`（含 `assistant/message` 广告块，满足 DSH 会话格式契约） |
 | **引擎命令/技能发现回显（C1）** | `lib/engine-runtime.js` | `acp.available_commands {engineId:'omp', total:166}`；`GET /multi-acp/engines/:id/commands` |
-| 引擎管理 UI | `lib/client.js`、`lib/routes.js` | B4：覆盖启动方式 / 环境变量行编辑 / 四态过滤+搜索 / 握手诊断行（`tmp/verify-ui.mjs` 38/38） |
+| 引擎管理 UI | `lib/client.js`、`lib/routes.js` | B4 + 0.1.30 打磨：覆盖启动方式 / 环境变量行编辑 / 四态过滤+搜索 / **两列信息网格 + 语义化诊断胶囊**（MCP·命令技能·权限映射·回合进度·最近握手）（`tmp/verify-ui.mjs` 81/81；人眼复核 `tmp/preview-ui.mjs` + `tmp/shot-ui-preview.ps1` → 截图） |
 | 时长与超时可控 | `lib/acp-client.js` | `promptTimeoutMs`（插件级 + 引擎级，`<=0` = 不超时）+ 超时打印"引擎最后一次 update" |
 | 历史文件修复工具 | `tmp/repair-orphan-toolcalls.mjs` | 6 条会话日志契约全绿（见 [VERIFICATION](./docs/VERIFICATION.md) §13） |
 

@@ -1,6 +1,6 @@
 {
   "name": "dsh-multi-acp",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "private": true,
   "type": "module",
   "description": "Drive external ACP agent CLIs (omp / opencode / command-code / ...) as DSH root agents. Engines are data rows, not code.",

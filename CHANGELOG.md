@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## 0.1.30 — 2026-10-10 🎨 **UI 打磨：引擎行"信息网格 + 诊断胶囊"（纯前端）**
+
+用户反馈"【引擎管理】这部分 UI 还是太简陋"。之前每行是 5~6 行**同字号等宽灰字**平铺
+（`可执行体:` / `launch:` / `SKILLS:` / `权限模式:` / `诊断: 一长串`），没有层级也没有语义色，
+眼睛只能一行行读。本次只动 `lib/client.js`（**零后端/协议改动**，日志格式与 ACP 行为完全不变）：
+
+### 1. 引擎行重排成三层
+- **① 两列信息网格 `(.macp-grid)`**：`可执行体 / 启动 / SKILLS / 权限模式 / 超时`，
+  左列标签（定宽 52px，各值左边缘对齐）、右列等宽字体值；找不到可执行体时值变琥珀色。
+  - 启动值现在**始终显示**（含内置默认），并带上 `cwdPolicy=`；权限行也从"非 default 才显示"
+    改成**一律显示**，避免不同引擎行数跳变；
+  - 超时值回落顺序：行上的生效值 → `/engines` 的 `defaults` → 硬默认，`0` 显示为"不限"。
+- **② 能力胶囊**：`capText()` 的 `MCP http · session load · opencode 1.2.3 · 579ms`
+  拆成一颗颗**虚框胶囊**（`macp-dchip-cap`），与下面的实框运行时胶囊区分。
+- **③ 运行时胶囊**：把原来"服务端拼好的一长串"拆成独立胶囊并**按语义着色**：
+  | 胶囊 | 内容 | 颜色 |
+  |---|---|---|
+  | MCP | `MCP：4 个`（title=具体 server） | 有下发=绿 / 没跑过=灰 |
+  | 引擎命令·技能 | `引擎命令/技能：12 个`（title=命令名列表） | 有上报=绿 / 未上报=黄 |
+  | 权限映射 | `权限映射：danger-full-access → dont_ask` / `未生效（读不到会话档位）` | 生效=绿 / 未生效=黄 |
+  | 回合进度 | `运行中 · 2 次工具调用 · 已耗时 1m35s` | **运行中=蓝** / 结束=灰 |
+  | 最近握手 | `最近握手 2026/10/10 12:30:00` | 灰 |
+  - 完全没跑过的引擎**收成一颗** `尚未跑过会话 · 暂无运行时数据`，不铺一排"未上报"噪音。
+  - 权限 `reason` 字面量（`no-preset` / `engine-unsupported` / `read-only-unsupported` /
+    `workspace-write-asks` / `unmapped:<preset>`）与字典 key **严格同名**（kebab-case），
+    查不到再回落 `unmapped`/`unknown`，**绝不把 key 当文案显示**。
+- **行级状态色条**：`.macp-row` 左侧 3px 竖条按状态着色（可用=绿 / 不可用=黄 / 未安装·停用灰）+ hover 阴影。
+- **编辑面板**：`.macp-legend` 定宽 96px（输入框左边缘对齐）、行内输入 `flex:1`、下拉 `max-width:420px`。
+
+### 2. 验证
+- `tmp/verify-ui.mjs` **81/81**（+8：网格行数/标签成对/胶囊类名/ok-绿/live-蓝/warn-黄/空态收编/超时"不限"）。
+- 新增**人眼复核工具** `tmp/preview-ui.mjs` + `tmp/shot-ui-preview.ps1`：
+  用同一份 client.js（mini-React 渲染真实 HTML）产出 `tmp/ui-preview.html`（列表）与
+  `tmp/ui-preview-edit.html`（点开"编辑"后），再用 agent-browser 截图，**不打扰运行中的 DSH 窗口**。
+- 其余 5 个 verify 脚本（preset-mcp / toolname-timeout / permission-bridge / live-flush / discover）全绿。
+
+---
+
 ## 0.1.29 — 2026-10-10 🟢 **B2：回合进度进诊断行；❌ C 方案（replace 流式）评估后否决**
 
 ### C 方案评估：**否决**（先读官方实现，证据如下）
