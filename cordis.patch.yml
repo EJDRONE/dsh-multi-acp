@@ -40,10 +40,15 @@
           include: []
           # 排除这些
           exclude: []
-        # 一次 ACP session/prompt 的超时（毫秒）。<= 0 = 不超时（长任务推荐）。
-        # 默认 300000。实测 omp 在大任务上会跑到 300s 被掐断，故做成可配置；
-        # 超时时会把"引擎最后一次 update"写进错误信息，便于判断卡在哪个工具上。
-        promptTimeoutMs: 300000
+        # 一次 ACP session/prompt 的**总时长闸**（毫秒）。**0（默认）= 不限**。
+        # A16（2026-10-10）：原来的 300000 墙钟上限会**误杀正在干活的长任务**
+        # （实测 session-503ea973：omp 完成 21 次工具调用、还在思考时被 300s 掐断）。
+        # 现在的主闸是下面的 idleTimeoutMs（空闲闸）；这个只作为"极端情况兜底"。
+        promptTimeoutMs: 0
+        # **空闲闸**（毫秒，默认 180000）：多久**没有任何 session/update** 才算引擎卡死。
+        # 只要引擎还在吐消息/调工具就不会触发 —— 长任务（定时采集、大重构）建议保持默认或调大；
+        # 0 = 关闭空闲判定（不推荐）。逐引擎可在【引擎管理 → 编辑 → 超时】里覆盖。
+        idleTimeoutMs: 180000
         # SKILLS（2026-10-09）：ACP 协议没有 skills 字段，技能靠**磁盘目录**共享。
         # 逐引擎配置在【引擎管理 → 编辑 → SKILLS 目录】里改（落在 <stateDir>/engines.json）：
         #   skillDelivery: auto（引擎自扫 ~/.agents/skills，omp/OpenCode 适用）

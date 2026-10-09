@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## 0.1.24 — 2026-10-10 🟢 **A16：prompt 超时改成"双闸"（空闲闸为主，总时长闸默认不限）**
+
+- **现象**（用户反馈 + 我拆日志确认）：`本轮运行失败 acp[omp]: session/prompt: timed out after 300s
+  (last engine update 0s ago: agent_thought_chunk " pinned")`。
+  `session-503ea973`（定时任务跑 omp 的新闻采集）：引擎**已成功完成 21 次工具调用**
+  （execute 13 / read 6 / fetch 2），仍在持续吐 `agent_thought_chunk` 时，被我们的**墙钟 300s** 掐断 ——
+  错误里那句 "last engine update **0s** ago" 就是"它正在干活"的铁证。
+- **修复**：把单一墙钟闸拆成两个（`lib/prompt-timeout.js`，纯函数、可单测）：
+  | 闸 | 字段 | 默认 | 作用 |
+  | --- | --- | --- | --- |
+  | **空闲闸（主）** | `idleTimeoutMs` | **180000** | 多久**没有任何 `session/update`** 才算卡死 → 长任务不再被误杀 |
+  | 总时长闸 | `promptTimeoutMs` | **0（不限）** | 仍可显式设上限，防极端情况 |
+  任一触发都带上"最后一次引擎 update"的摘要（A11-2 的诊断保留）。
+- **实现**：agent 侧 `_promptOnce` 用 `setInterval` 看门狗 + `Promise.race`（它才知道
+  `_lastUpdate` 是什么时候）；客户端侧只负责总时长闸。引擎行可单独覆盖两个字段
+  （`engines.json` / PUT），插件配置同名项作为默认值注入。
+- **UI**：编辑面板新增 **「超时」** 行 —— `空闲(ms)` / `总时长(ms)` 两个输入框
+  （占位符显示插件默认值，留空 = 不改，填 `0` = 关闭该闸）。
+- 验收：`tmp/verify-toolname-timeout.mjs` **31/31**（+9 条双闸断言，含**事故复现**：
+  "持续有 update 的长任务在默认配置下不会被掐断"）、`tmp/verify-ui.mjs` **73/73**
+  （+2：两个超时输入框存在并在 PUT body 中下发）。
+
+---
+
 ## 0.1.23 — 2026-10-10 🟢 **A15：会话权限档 → 引擎权限档的自动映射（"完全权限 ⇒ 引擎免问"）**
 
 - **背景**：DSH 的档位（【完全权限】/【工作区内修改】/【仅可查看】）写的是 `sandbox/mode` +
