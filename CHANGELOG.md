@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.1.21 — 2026-10-09 🔴 **A14：prompt 没跑完时也必须补"工具广告块"（否则会话又变 corrupt）**
+
+- **现象**：新会话 `session-a8b0c5f6`（WeKnora）加载失败：
+  `SessionFormatError: tool/call call_00_6nWenHV41HbK2VSmtZDe6812 has no advertised tool lifecycle`。
+- **根因（A11-3 的缺口）**：广告块只在 `_promptOnce` **成功返回**时才写；
+  而 `_flushToolEvents()` 在 `finally` 一定会落 tool 事件 ⇒ **超时 / 取消 / 引擎中途死掉**时，
+  日志里只有 `tool/call`、没有广告 → 判 corrupt。
+- **修复**：新增 `_ensureToolAdvertisements(events)`，在 `_flushToolEvents()` 落盘**之前**
+  把"还没广告过的 callId"补成一条 `assistant/message`（content 全是 tool-call 块、`stream: []`）；
+  已广告过的记在 `_advertised` 集合里，**不重复**（同一 callId 重复广告同样会被校验器拒绝）。
+  ⚠️ 该集合只在 turn 开始时重置 —— 一度误加在 `_flushToolEvents()` 里会导致重复广告，已修。
+- **历史文件**：`tmp/repair-orphan-toolcalls.mjs` 修复 `session-a8b0c5f6`
+  （28 条未广告调用 → 插入 28 条广告块，seq 重排 0..107，重排帧），修复后
+  `未广告=0`、turn/step 体检无 ⚠️；**全量扫描 0 个会话受影响**。
+- 检测工具：`node tmp\scan-orphan-toolcalls.mjs`（会话级）+
+  `node tmp\repair-orphan-toolcalls.mjs <dir> [--apply] [--reframe] [--normalize-turns]`。
+
 > **约定**：每次改动代码必须同步递增 `package.json` 的 `version`。
 > 理由：DSH 插件页显示版本号，是判断"新代码是否真的加载"的唯一可靠依据。
 > 尤其是本插件经 pnpm 以**硬链接**安装 —— 改源码即生效，UI 上无法区分
