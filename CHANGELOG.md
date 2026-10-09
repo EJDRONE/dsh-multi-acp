@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## 0.1.28 — 2026-10-10 🟢 **A18：权限映射结果进诊断行（+ 会话日志复核）**
+
+- **复核** `session-e9a4b3eb`（用户截图那次的会话，preset=`acp-omp`）：
+  - 创建于 18:31:55，**当时 0.1.26 还没发布**（omp 行无权限模板）+ 会话 `permissions` 投影为 `no-preset`
+    ⇒ A15 的映射**没生效**，omp 照常发 ACP 权限请求；
+  - 会话创建后权限档立刻被切到 `danger-full-access`+`never`，但 **3 次审批仍全部 `rejected`**
+    （seq 17 / 19 / 72，对应截图那两条 `bash`：`date /t & time /t`、`if exist …`）——
+    与 `trace` 里的 `reason=no-preset` 完全吻合；
+  - 其余 **21 次工具调用全部成功**，`turn/end` 又是 `timed out after 300s (last engine update 5s ago…)`
+    ⇒ 旧版本默认值（A16 起为 0/不限）；
+  - 最后那条 `isError=true`（`[dsh-multi-acp] no result from the engine — turn failed…`）是 **A12 的收尾**，
+    说明"超时中断"时日志契约仍成立（没有变成加载失败）✓。
+- **新增（A18）**：`engine-runtime.js#recordPermissionMapping()` —— 把每次会话的映射结果
+  （`preset / mapped / reason / poolKey`）记进引擎运行时，`engineDiagnosticLine()` 追加一段：
+
+  | 情况 | 诊断行显示 |
+  | --- | --- |
+  | 映射成功 | `权限映射: danger-full-access → dont_ask（生效中）` |
+  | 会话档位读不到 | `权限映射: 未生效（会话档位读不到）— 无人值守请把引擎权限模式设为 dont_ask` |
+  | 引擎没声明该档 | `权限映射: 未生效（引擎未声明该档参数，会话档位 …）— 可手填 args 或声明 permissionTemplates` |
+  | 仅可查看 | `权限映射: 会话档位【仅可查看】，ACP 无只读引擎语义` |
+  | 工作区内修改 | `权限映射: 未生效（会话档位【工作区内修改】→ 引擎照常询问）` |
+
+  `acp-agent.js` 在建/恢复会话时调用；UI 无需改动（诊断行本来就渲染 `row.diagnostic`）。
+- 验收：`tmp/verify-permission-bridge.mjs` **24/24**（+7 条：五类摘要文案 + 诊断行含该段 + 快照字段）。
+
+---
+
 ## 0.1.27 — 2026-10-10 🔴 **A17② 回退：助手文本增量 append 会被 UI 折叠 → 中间输出"被吞"**
 
 - **用户反馈**：「会话中间的输出被吞了」（截图里最后一轮只显示了一小段碎片）。
