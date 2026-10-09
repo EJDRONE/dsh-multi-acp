@@ -1,11 +1,14 @@
 # dsh_multi_acp
 
+> **仓库**：<https://github.com/EJDRONE/dsh-multi-acp>（`git@github.com:EJDRONE/dsh-multi-acp.git`） · **许可**：[MIT](./LICENSE) © 2026 EJDRONE
+>
 > 让 **DSH 的一个会话由外部 ACP agent CLI 作为根 agent 驱动**（路线 B · 真·换引擎）。
 > 设计核心：**引擎是数据行，不是代码** —— 新增一个引擎 = 加一行配置。
 
 - **目标宿主**：DSH Desktop 0.2.0-rc.2（`DSH_HOME = D:\Ecode\.dsh`，profile = `desktop`）
-- **当前版本**：**0.1.16**（2026-10-09）
+- **当前版本**：**0.1.20**（2026-10-09）
 - **状态**：🟢 **端到端跑通，并已在 DSH 内完成真实会话验证**（引擎路由 / preset 工具面 / MCP 注入 / 工具回显 / 引擎命令回显 / 引擎管理 UI）
+- **实测可用的引擎**：omp · Qoder CLI CN（`--acp`）· OpenCode · Command Code —— 四家 ACP 往返 + MCP 注入均已验证（见文末"引擎环境事实"）
 - **文档**：[设计](./docs/DESIGN.md) · [引擎规格](./docs/ENGINE-SPEC.md) · [验证方案](./docs/VERIFICATION.md) · [UI 设计](./docs/UI-DESIGN.md) · [ACP 集成](./docs/ACP-INTEGRATION.md) · [问题清单](./docs/ISSUES.md) · [路线图](./docs/ROADMAP.md) · [证据](./docs/evidence/) · [变更日志](./CHANGELOG.md)
 
 ---
