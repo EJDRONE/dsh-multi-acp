@@ -1,5 +1,46 @@
 # CHANGELOG
 
+## 0.1.27 — 2026-10-10 🔴 **A17② 回退：助手文本增量 append 会被 UI 折叠 → 中间输出"被吞"**
+
+- **用户反馈**：「会话中间的输出被吞了」（截图里最后一轮只显示了一小段碎片）。
+- **定位**（`session-698e7fda` 实测 + DSH 源码语义）：
+  1. 日志里确实有 29 条 `assistant/message`（大量是 A14 的工具广告块，以及我按 400 字符 / 1.2s 节流写出的**增量文本**）；
+  2. 但 DSH 会把**同一 turn/step 内连续的 `assistant/message` 折叠成一条**、只展示最新那份 ⇒ 用户只看到最后一段碎片；
+  3. `dsh-session/lib/types/surface.d.ts:29-31` 已把语义说明白：
+     *"a landed replacement would erase conversation the user already saw. Append-origin events are
+     that transcript's durable source material; replacement copies stay **model-only**."*
+     ⇒ 想"边跑边出字"必须是 **append 打底 + `surfaceOp:{op:'replace',start,end}` + `sourceEventSeqs`
+     原地增长 + 收尾再 append 一次完整文本**；单纯多条 append 一定出问题。
+- **处置**：**回退 ②** —— `_promptOnce` 改回"助手文本整段一次写入"（`stream: []`）；
+  `_maybeFlushAssistantDelta()` 保留但不再调用（注释与单测里写明实验结论与正确做法）。
+  **① 保留**（工具事件增量落盘写的是 `tool/call` / `tool/result`，不涉及 surface 折叠，安全）。
+- **顺带确认**：该会话里的 `timed out after 300s` 来自 **0.1.24 之前**的默认值 —— A16 起
+  `promptTimeoutMs` 默认 **0 = 不限**、主闸为 `idleTimeoutMs=180000`；profile 的 `cordis.patch.yml`
+  里**没有**超时字段，所以升级插件即生效（无需改配置）。
+- 用户贴的 `execute{…} → error`：日志里这些工具结果 `isError=false`，正文是**引擎自己的失败信息**
+  （`ls -la` 的 POSIX 用法在 Windows 上、`curl --noproxy` 抓取失败、`Error: All web search providers failed` 等）
+  —— 属引擎侧工具行为，我们如实记录。
+
+---
+
+## 0.1.26 — 2026-10-10 🟢 **内置四家引擎声明 permissionTemplates（实测各自 --help）**
+
+- 用户反馈「权限模式选不了」：原因是当初只有 `qodercn` 声明了 `permissionTemplates`，
+  其余引擎的档位被 UI 灰掉（设计上"宁可灰掉，也不让选了却静默无效"）。
+- 按各自 `--help` 实测补齐：
+  | 引擎 | `dont_ask` | `bypass` | 依据 |
+  | --- | --- | --- | --- |
+  | omp | `--auto-approve` | `--approval-mode yolo` | `omp --help` |
+  | opencode | `--auto` | —（无更宽档，不声明） | `opencode --help` |
+  | commandcode | `--permission-mode yolo` | `--yolo` | `commandcode --help` |
+  | qodercn | `--permission-mode dont_ask` | `--dangerously-skip-permissions` | `qoderclicn --help` |
+- 真机验证：`omp acp --auto-approve` → `initialize` ok + `session/new` 接受 4 个 MCP（参数不破坏 ACP 握手）。
+- UI：仍未声明档位的引擎不再"只是灰掉"，下方会解释（可手填 args 或声明 permissionTemplates）。
+- 连带效果：**A15 的"会话档位【完全权限】⇒ 引擎自动免问"现在对四家都真正生效**。
+- 验收：`tmp/verify-preset-mcp.mjs` **45/45**（新增 8 条模板断言）。
+
+---
+
 ## 0.1.25 — 2026-10-10 🟢 **A17：长任务终于"看得见"了 —— 工具事件增量落盘 + 助手文本流式**
 
 - **现象（用户提问"omp 跑的过程中完全不给 DSH 反馈吗？"→ 实测确认）**：
