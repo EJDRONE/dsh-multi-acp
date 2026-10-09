@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 0.1.23 — 2026-10-10 🟢 **A15：会话权限档 → 引擎权限档的自动映射（"完全权限 ⇒ 引擎免问"）**
+
+- **背景**：DSH 的档位（【完全权限】/【工作区内修改】/【仅可查看】）写的是 `sandbox/mode` +
+  `approval/policy`，**只管 DSH 自己的工具**；ACP 会话里引擎的工具只能通过
+  `session/request_permission` 让 DSH 参与，而请求里的"工具"是引擎给的整条命令行，
+  DSH 的策略引擎认不出 ⇒ 只能"问人" ⇒ 无人值守时一律被拒（实测切【完全权限】后仍 6/6 rejected）。
+- **接通**：新增 `lib/permission-bridge.js`
+  - `readSessionPermissions(projections, session)` —— 读 DSH 的 `permissions` 会话投影
+    （`dsh-permission-presets` 的 `{preset, sandbox, approval}`）；
+  - `mapPresetToMode()` —— 映射表：**完全权限 ⇒ `dont_ask`**；工作区内修改 / 仅可查看 ⇒ 不改动引擎，
+    但分别给出"无人值守会被拒"/"ACP 没有只读引擎语义"的**明确告警**；未知档 ⇒ 不介入；
+    引擎没声明该档模板 ⇒ 不改动 + 告警（**不假装放开**）；
+  - `applyPermissionMode()` —— 产出会话专用引擎变体，带 **`poolKey = id#mode`**
+    （`acp-host.js#get` 改用它池化：免问 / 询问不能共用一个进程），`id` 保持不变
+    （preset / session-map / 事件 source 都依赖它）。
+- **接线**：工厂新增 `this.projections`（读投影）与 `this.permissionModeFromSession`（插件配置，
+  默认 `true`）；`createAcpAgent()` 在 `pool.get()` **之前**完成映射，并 `trace('session.permission')`
+  记录 `preset/sandbox/approval/mapped/poolKey`。
+- **UI**：权限模式下拉下新增说明（"会话档位为【完全权限】时本引擎自动以不询问档启动"）。
+- 配置：`cordis.patch.yml` 新增 `permissionModeFromSession: true`。
+- 验收：新增 `tmp/verify-permission-bridge.mjs` **17/17**（映射表 / 引擎不支持时的告警 /
+  `poolKey` 与 `id` 语义 / 投影读取三种异常 / 开关关闭 / `resolveSpawn` 真的带上权限参数）。
+
+---
+
 ## 0.1.22 — 2026-10-10 🟢 **引擎级 `permissionMode` 开关（治"全通道被拒"）**
 
 - **现场诊断**（`session-8a6cb2e1`，定时任务跑的 `acp-qodercn` 会话）：

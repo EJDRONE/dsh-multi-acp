@@ -51,3 +51,9 @@
         #                | none
         #   skillsDirs:   要暴露给该引擎的目录（空 = ~/.agents/skills，即 DSH 的 skill 目录）
         #   skillArgsTemplate: args 模式的参数写法，默认 ['--skill', '{dir}']
+        # 权限模式（2026-10-10）：会话权限档 → 引擎启动档的自动映射（见 lib/permission-bridge.js）。
+        #   true（默认）：会话档位为【完全权限】时，引擎自动以"不询问"档启动
+        #                （否则定时任务里"审批没人批"会拒掉所有工具，实测 session-8a6cb2e1：11/11 rejected）；
+        #                【工作区内修改】/【仅可查看】沿用引擎行设置并打告警。
+        #   false：完全不介入，只用引擎行自己的 permissionMode。
+        permissionModeFromSession: true
