@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 0.1.25 — 2026-10-10 🟢 **A17：长任务终于"看得见"了 —— 工具事件增量落盘 + 助手文本流式**
+
+- **现象（用户提问"omp 跑的过程中完全不给 DSH 反馈吗？"→ 实测确认）**：
+  引擎**一直在发** `session/update`（`trace.log` 里 `acp.tool-call` 连续出现），
+  但**会话日志直到 turn 结束才一次性落盘** —— `session-503ea973` 里 21 个 `tool/call`
+  的时间戳全是 `+300s`（我们掐断那一刻），那 4 分钟 UI 完全没反馈，看起来像死机。
+- **修复①：工具事件增量落盘**（`_onToolCallUpdate`）—— `tool/call` 首现即 flush、
+  终态 `tool/result` 一到即 flush（广告块由 A14 在 flush 内先写；悬空调用仍由 A12 在 `step/end` 前收尾）。
+- **修复②：助手文本流式**（`_maybeFlushAssistantDelta`）—— 只写**增量**（`_streamedTextLen` 去重），
+  按 **≥1200ms 或 ≥400 字符**节流，写 `assistant/message`（`surfaceOp: 'append'`）。
+  长回合会呈现为若干段连续消息；`trace('acp.live-flush.text')` 记录每次落盘量。
+- **已知增量改进**（本轮不做，已在代码注释与 CHANGELOG 记录）：把"同一条消息原地增长"做成
+  `surfaceOp: {op:'replace', start, end}` + `sourceEventSeqs`。需要 `session.append()` 回传 seq，
+  且**类型里的 `start/end`（`dsh-session` types.d.ts:393）与实测日志里的 `startSeq/endSeq` 命名不一致**
+  （原生会话实测样例：`{"op":"replace","startSeq":10,"endSeq":10}` + `sourceEventSeqs:[10]`），
+  必须先在真机上验证清楚再用，否则会把会话日志写成非法格式。
+- 验收：新增 `tmp/verify-live-flush.mjs` **12/12**（首现即 flush / in_progress 不重复 flush /
+  终态即 flush / ≥400 字符立即写 / 节流生效 / 间隔到只写增量 / force 收尾 / 不写空消息 / 非 turn 不落盘）。
+
+---
+
 ## 0.1.24 — 2026-10-10 🟢 **A16：prompt 超时改成"双闸"（空闲闸为主，总时长闸默认不限）**
 
 - **现象**（用户反馈 + 我拆日志确认）：`本轮运行失败 acp[omp]: session/prompt: timed out after 300s
