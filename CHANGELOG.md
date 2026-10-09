@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## 0.1.22 — 2026-10-10 🟢 **引擎级 `permissionMode` 开关（治"全通道被拒"）**
+
+- **现场诊断**（`session-8a6cb2e1`，定时任务跑的 `acp-qodercn` 会话）：
+  `approval/asked=11 / decided=11`，**11 次全部 `rejected`**；对应的 `tool/result` 是引擎自己的
+  「The user doesn't want to proceed with this tool use…」⇒ `curl` / `Invoke-WebRequest` / `node fetch` /
+  `chrome-devtools` / `web_search` / **连 `Edit 写文件`** 全部被拒，看起来像"网络+写盘都被沙箱挡了"。
+  真相：这些是**引擎自己的工具**，每个都先发 ACP `session/request_permission`
+  → 我们桥（A2）转给 DSH 审批 → **无人值守任务没人点批准**（且 `policy:"never"` 的兜底是 **fail-closed 拒绝**）
+  → 桥把 `rejected` 回给引擎 → 引擎报"用户拒绝"。**与沙箱、网络、MCP schema 都无关。**
+- **新增：引擎级 `permissionMode`**（`lib/engines.js`）三档，**数据集驱动**（各家 CLI 开关不同）：
+  | 档位 | 行为 | 适用 |
+  | --- | --- | --- |
+  | `default` | 不追加参数，引擎照常询问 | 交互会话（安全默认） |
+  | `dont_ask` | 按 `permissionTemplates.dont_ask` 追加（Qoder：`--permission-mode dont_ask`） | **定时任务/无人值守** |
+  | `bypass` | 按模板追加（Qoder：`--dangerously-skip-permissions`） | 完全跳过检查（⚠️ 危险） |
+  只有引擎行声明了对应模板该档才可选（UI 会禁用未声明的档位）。
+- **内置 `qodercn` 行**已声明两档模板（实测取自 `qoderclicn --help`）；其余引擎未声明（UI 显示为不可选，
+  可用「覆盖启动方式 → args」手填）。
+- **UI**：编辑面板新增「权限模式」下拉（+ 切到非默认档时显示实际追加的参数）；引擎行摘要只在非 `default` 时显示
+  （`权限模式: dont_ask · 追加参数: --permission-mode dont_ask`）。
+- **路由**：`PUT /multi-acp/engines/:id` 接受 `permissionMode`。
+- 验收：`tmp/verify-preset-mcp.mjs` **37/37**（+7 条权限档断言；顺带把那条会随 MCP 存储变动而假失败的
+  exclude 断言改成"排除本机真实存在的第一条连接别名"）、`tmp/verify-ui.mjs` **71/71**（+4：三档可选、默认 default、
+  切换后显示追加参数、PUT body 带 `permissionMode`）、`tmp/verify-toolname-timeout.mjs` 22/22。
+
+---
+
 ## 0.1.21 — 2026-10-09 🔴 **A14：prompt 没跑完时也必须补"工具广告块"（否则会话又变 corrupt）**
 
 - **现象**：新会话 `session-a8b0c5f6`（WeKnora）加载失败：
