@@ -1,0 +1,41 @@
+{
+  "name": "dsh-multi-acp",
+  "version": "0.1.20",
+  "private": true,
+  "type": "module",
+  "description": "Drive external ACP agent CLIs (omp / opencode / command-code / ...) as DSH root agents. Engines are data rows, not code.",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./preset-marker": "./lib/preset-marker.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=22.19"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-agent": "*",
+    "@deepseek-ai/dsh-commands": "*",
+    "@deepseek-ai/dsh-host-webserver": "*",
+    "@deepseek-ai/dsh-llm": "*",
+    "@deepseek-ai/dsh-session": "*",
+    "@deepseek-ai/dsh-settings": "*",
+    "@deepseek-ai/dsh-web": "*",
+    "@deepseek-ai/schemastery": "*"
+  },
+  "dependencies": {
+    "@agentclientprotocol/sdk": "0.25.1",
+    "schemastery": "^3.17.0"
+  }
+}

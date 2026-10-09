@@ -1,0 +1,15 @@
+{
+  "name": "dsh-multi-acp-probe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "P0 ACP probe for dsh_multi_acp (see ../docs/VERIFICATION.md Step 3)",
+  "scripts": {
+    "probe:opencode": "node probe-acp.mjs \"C:\\Users\\29096\\.opencode\\bin\\opencode.exe\" acp",
+    "probe:commandcode": "node probe-acp.mjs \"C:\\nvm4w\\nodejs\\commandcode.ps1\" acp"
+  },
+  "dependencies": {
+    "@agentclientprotocol/sdk": "0.25.1",
+    "zod": "^4.0.0"
+  }
+}

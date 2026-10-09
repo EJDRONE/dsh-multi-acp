@@ -1,0 +1,3734 @@
+{
+  "probe": "dsh_multi_acp/probe-acp",
+  "startedAt": "2026-10-08T06:46:40.753Z",
+  "target": {
+    "command": "C:\\Users\\29096\\AppData\\Local\\omp\\omp.exe",
+    "args": [
+      "acp"
+    ],
+    "spawnVia": "direct",
+    "actual": {
+      "command": "C:\\Users\\29096\\AppData\\Local\\omp\\omp.exe",
+      "args": [
+        "acp"
+      ]
+    },
+    "setConfig": [
+      "model=deepseek/deepseek-v4-pro"
+    ]
+  },
+  "platform": "win32",
+  "node": "v24.21.0",
+  "sdk": "0.25.1",
+  "spawn": {
+    "ok": true,
+    "pid": 39948,
+    "stderr": [],
+    "rawLines": 14,
+    "parseFailures": 0
+  },
+  "initialize": {
+    "ok": true,
+    "latencyMs": 560,
+    "protocolVersion": 1,
+    "agentInfo": {
+      "name": "oh-my-pi",
+      "title": "omp",
+      "version": "18.3.5"
+    },
+    "agentCapabilities": {
+      "loadSession": true,
+      "mcpCapabilities": {
+        "http": true,
+        "sse": true
+      },
+      "promptCapabilities": {
+        "embeddedContext": true,
+        "image": true
+      },
+      "sessionCapabilities": {
+        "list": {},
+        "fork": {},
+        "resume": {},
+        "close": {}
+      }
+    },
+    "authMethods": [
+      {
+        "id": "agent",
+        "name": "Use existing local credentials",
+        "description": "Authenticate via the provider keys/OAuth state already configured under ~/.omp."
+      }
+    ],
+    "raw": {
+      "protocolVersion": 1,
+      "agentInfo": {
+        "name": "oh-my-pi",
+        "title": "omp",
+        "version": "18.3.5"
+      },
+      "authMethods": [
+        {
+          "id": "agent",
+          "name": "Use existing local credentials",
+          "description": "Authenticate via the provider keys/OAuth state already configured under ~/.omp."
+        }
+      ],
+      "agentCapabilities": {
+        "loadSession": true,
+        "mcpCapabilities": {
+          "http": true,
+          "sse": true
+        },
+        "promptCapabilities": {
+          "embeddedContext": true,
+          "image": true
+        },
+        "sessionCapabilities": {
+          "list": {},
+          "fork": {},
+          "resume": {},
+          "close": {}
+        }
+      }
+    }
+  },
+  "sessions": [
+    {
+      "index": 1,
+      "ok": true,
+      "sessionId": "01a11a43-9dc0-7459-9340-2d1b52143b5f",
+      "modes": {
+        "availableModes": [
+          {
+            "id": "default",
+            "name": "Default",
+            "description": "Standard ACP headless mode"
+          },
+          {
+            "id": "plan",
+            "name": "Plan",
+            "description": "Read-only planning mode that drafts a plan to a markdown file before any code changes"
+          }
+        ],
+        "currentModeId": "default"
+      },
+      "models": null,
+      "configOptions": [
+        {
+          "id": "mode",
+          "name": "Mode",
+          "category": "mode",
+          "type": "select",
+          "currentValue": "default",
+          "options": [
+            {
+              "value": "default",
+              "name": "Default",
+              "description": "Standard ACP headless mode"
+            },
+            {
+              "value": "plan",
+              "name": "Plan",
+              "description": "Read-only planning mode that drafts a plan to a markdown file before any code changes"
+            }
+          ]
+        },
+        {
+          "id": "model",
+          "name": "Model",
+          "category": "model",
+          "type": "select",
+          "currentValue": "deepseek/deepseek-v4-pro",
+          "options": [
+            {
+              "value": "deepseek/deepseek-flash",
+              "name": "DeepSeek-V4.1-Flash",
+              "description": "deepseek/deepseek-flash"
+            },
+            {
+              "value": "deepseek/deepseek-v4-flash",
+              "name": "DeepSeek V4 Flash",
+              "description": "deepseek/deepseek-v4-flash"
+            },
+            {
+              "value": "deepseek/deepseek-v4-flash-vision-exp",
+              "name": "DeepSeek V4 Flash Vision Exp",
+              "description": "deepseek/deepseek-v4-flash-vision-exp"
+            },
+            {
+              "value": "deepseek/deepseek-v4-pro",
+              "name": "DeepSeek-V4-Pro",
+              "description": "deepseek/deepseek-v4-pro"
+            },
+            {
+              "value": "opencode-go/deepseek-v4-flash",
+              "name": "DeepSeek V4 Flash",
+              "description": "opencode-go/deepseek-v4-flash"
+            },
+            {
+              "value": "opencode-go/deepseek-v4-flash-vision-exp",
+              "name": "DeepSeek V4 Flash Vision Exp",
+              "description": "opencode-go/deepseek-v4-flash-vision-exp"
+            },
+            {
+              "value": "opencode-go/deepseek-v4-pro",
+              "name": "DeepSeek V4 Pro (New)",
+              "description": "opencode-go/deepseek-v4-pro"
+            },
+            {
+              "value": "opencode-go/deepseek-v4.1-flash",
+              "name": "DeepSeek V4.1 Flash",
+              "description": "opencode-go/deepseek-v4.1-flash"
+            },
+            {
+              "value": "opencode-go/glm-5",
+              "name": "GLM-5",
+              "description": "opencode-go/glm-5"
+            },
+            {
+              "value": "opencode-go/glm-5.1",
+              "name": "GLM-5.1",
+              "description": "opencode-go/glm-5.1"
+            },
+            {
+              "value": "opencode-go/glm-5.2",
+              "name": "GLM-5.2",
+              "description": "opencode-go/glm-5.2"
+            },
+            {
+              "value": "opencode-go/glm-5.3",
+              "name": "GLM-5.3",
+              "description": "opencode-go/glm-5.3"
+            },
+            {
+              "value": "opencode-go/glm-5.3-flash",
+              "name": "GLM-5.3-Flash",
+              "description": "opencode-go/glm-5.3-flash"
+            },
+            {
+              "value": "opencode-go/gpt-5.6-luna",
+              "name": "GPT-5.6 Luna",
+              "description": "opencode-go/gpt-5.6-luna"
+            },
+            {
+              "value": "opencode-go/gpt-6-luna",
+              "name": "GPT-6 Luna",
+              "description": "opencode-go/gpt-6-luna"
+            },
+            {
+              "value": "opencode-go/grok-4.5",
+              "name": "Grok 4.5",
+              "description": "opencode-go/grok-4.5"
+            },
+            {
+              "value": "opencode-go/grok-4.6",
+              "name": "Grok 4.6",
+              "description": "opencode-go/grok-4.6"
+            },
+            {
+              "value": "opencode-go/grok-4.7",
+              "name": "Grok 4.7",
+              "description": "opencode-go/grok-4.7"
+            },
+            {
+              "value": "opencode-go/hy3",
+              "name": "Hy3",
+              "description": "opencode-go/hy3"
+            },
+            {
+              "value": "opencode-go/hy4-preview",
+              "name": "Hy4 preview",
+              "description": "opencode-go/hy4-preview"
+            },
+            {
+              "value": "opencode-go/kimi-k2.5",
+              "name": "kimi-k2.5",
+              "description": "opencode-go/kimi-k2.5"
+            },
+            {
+              "value": "opencode-go/kimi-k2.6",
+              "name": "Kimi K2.6",
+              "description": "opencode-go/kimi-k2.6"
+            },
+            {
+              "value": "opencode-go/kimi-k2.7-code",
+              "name": "Kimi K2.7 Code",
+              "description": "opencode-go/kimi-k2.7-code"
+            },
+            {
+              "value": "opencode-go/kimi-k3",
+              "name": "Kimi K3",
+              "description": "opencode-go/kimi-k3"
+            },
+            {
+              "value": "opencode-go/longcat-2.0",
+              "name": "LongCat-2.0",
+              "description": "opencode-go/longcat-2.0"
+            },
+            {
+              "value": "opencode-go/mimo-v2-omni",
+              "name": "MiMo-V2-Omni",
+              "description": "opencode-go/mimo-v2-omni"
+            },
+            {
+              "value": "opencode-go/mimo-v2-pro",
+              "name": "MiMo-V2-Pro",
+              "description": "opencode-go/mimo-v2-pro"
+            },
+            {
+              "value": "opencode-go/mimo-v2.5",
+              "name": "MiMo V2.5",
+              "description": "opencode-go/mimo-v2.5"
+            },
+            {
+              "value": "opencode-go/mimo-v2.5-pro",
+              "name": "MiMo V2.5 Pro",
+              "description": "opencode-go/mimo-v2.5-pro"
+            },
+            {
+              "value": "opencode-go/mimo-v2.6-flash",
+              "name": "MiMo-V2.6-Flash",
+              "description": "opencode-go/mimo-v2.6-flash"
+            },
+            {
+              "value": "opencode-go/mimo-v2.6-pro",
+              "name": "MiMo-V2.6-Pro",
+              "description": "opencode-go/mimo-v2.6-pro"
+            },
+            {
+              "value": "opencode-go/minimax-m2.5",
+              "name": "MiniMax-M2.5",
+              "description": "opencode-go/minimax-m2.5"
+            },
+            {
+              "value": "opencode-go/minimax-m2.7",
+              "name": "MiniMax-M2.7",
+              "description": "opencode-go/minimax-m2.7"
+            },
+            {
+              "value": "opencode-go/minimax-m3",
+              "name": "MiniMax-M3",
+              "description": "opencode-go/minimax-m3"
+            },
+            {
+              "value": "opencode-go/muse-spark-1.2-contributor",
+              "name": "Muse Spark 1.2 Contributor",
+              "description": "opencode-go/muse-spark-1.2-contributor"
+            },
+            {
+              "value": "opencode-go/muse-spark-1.3-contributor",
+              "name": "Muse Spark 1.3 Contributor",
+              "description": "opencode-go/muse-spark-1.3-contributor"
+            },
+            {
+              "value": "opencode-go/ox-alpha-free",
+              "name": "Ox Alpha Free (Unlimited)",
+              "description": "opencode-go/ox-alpha-free"
+            },
+            {
+              "value": "opencode-go/qwen3.5-plus",
+              "name": "Qwen3.5 Plus",
+              "description": "opencode-go/qwen3.5-plus"
+            },
+            {
+              "value": "opencode-go/qwen3.6-plus",
+              "name": "Qwen3.6 Plus",
+              "description": "opencode-go/qwen3.6-plus"
+            },
+            {
+              "value": "opencode-go/qwen3.7-max",
+              "name": "Qwen3.7 Max",
+              "description": "opencode-go/qwen3.7-max"
+            },
+            {
+              "value": "opencode-go/qwen3.7-plus",
+              "name": "Qwen3.7 Plus",
+              "description": "opencode-go/qwen3.7-plus"
+            },
+            {
+              "value": "opencode-go/qwen3.8-flash",
+              "name": "Qwen3.8 Flash",
+              "description": "opencode-go/qwen3.8-flash"
+            },
+            {
+              "value": "opencode-go/qwen3.8-max",
+              "name": "Qwen3.8 Max",
+              "description": "opencode-go/qwen3.8-max"
+            },
+            {
+              "value": "opencode-go/space-bunny-free",
+              "name": "Space Bunny Free",
+              "description": "opencode-go/space-bunny-free"
+            },
+            {
+              "value": "opencode-go/claude-haiku-5-5",
+              "name": "Claude Haiku 5.5",
+              "description": "opencode-go/claude-haiku-5-5"
+            },
+            {
+              "value": "opencode-go/longcat-2.5-preview-free",
+              "name": "LongCat 2.5 Preview Free",
+              "description": "opencode-go/longcat-2.5-preview-free"
+            },
+            {
+              "value": "opencode-go/space-bunny",
+              "name": "Space Bunny",
+              "description": "opencode-go/space-bunny"
+            },
+            {
+              "value": "opencode-go/deepseek-flash",
+              "name": "deepseek-flash",
+              "description": "opencode-go/deepseek-flash"
+            },
+            {
+              "value": "opencode-go/omen-alpha",
+              "name": "omen-alpha",
+              "description": "opencode-go/omen-alpha"
+            },
+            {
+              "value": "opencode-zen/big-pickle",
+              "name": "Big Pickle",
+              "description": "opencode-zen/big-pickle"
+            },
+            {
+              "value": "opencode-zen/claude-3-5-haiku",
+              "name": "Claude Haiku 3.5",
+              "description": "opencode-zen/claude-3-5-haiku"
+            },
+            {
+              "value": "opencode-zen/claude-fable-5",
+              "name": "Claude Fable 5",
+              "description": "opencode-zen/claude-fable-5"
+            },
+            {
+              "value": "opencode-zen/claude-fable-5-1",
+              "name": "Claude Fable 5.1",
+              "description": "opencode-zen/claude-fable-5-1"
+            },
+            {
+              "value": "opencode-zen/claude-haiku-4-5",
+              "name": "Claude Haiku 4.5",
+              "description": "opencode-zen/claude-haiku-4-5"
+            },
+            {
+              "value": "opencode-zen/claude-opus-4-1",
+              "name": "Claude Opus 4.1",
+              "description": "opencode-zen/claude-opus-4-1"
+            },
+            {
+              "value": "opencode-zen/claude-opus-4-5",
+              "name": "Claude Opus 4.5",
+              "description": "opencode-zen/claude-opus-4-5"
+            },
+            {
+              "value": "opencode-zen/claude-opus-4-6",
+              "name": "Claude Opus 4.6",
+              "description": "opencode-zen/claude-opus-4-6"
+            },
+            {
+              "value": "opencode-zen/claude-opus-4-7",
+              "name": "Claude Opus 4.7",
+              "description": "opencode-zen/claude-opus-4-7"
+            },
+            {
+              "value": "opencode-zen/claude-opus-4-8",
+              "name": "Claude Opus 4.8",
+              "description": "opencode-zen/claude-opus-4-8"
+            },
+            {
+              "value": "opencode-zen/claude-opus-5",
+              "name": "Claude Opus 5",
+              "description": "opencode-zen/claude-opus-5"
+            },
+            {
+              "value": "opencode-zen/claude-opus-5-5",
+              "name": "Claude Opus 5.5",
+              "description": "opencode-zen/claude-opus-5-5"
+            },
+            {
+              "value": "opencode-zen/claude-sonnet-4",
+              "name": "Claude Sonnet 4",
+              "description": "opencode-zen/claude-sonnet-4"
+            },
+            {
+              "value": "opencode-zen/claude-sonnet-4-5",
+              "name": "Claude Sonnet 4.5",
+              "description": "opencode-zen/claude-sonnet-4-5"
+            },
+            {
+              "value": "opencode-zen/claude-sonnet-4-6",
+              "name": "Claude Sonnet 4.6",
+              "description": "opencode-zen/claude-sonnet-4-6"
+            },
+            {
+              "value": "opencode-zen/claude-sonnet-5",
+              "name": "Claude Sonnet 5",
+              "description": "opencode-zen/claude-sonnet-5"
+            },
+            {
+              "value": "opencode-zen/deepseek-v4-flash",
+              "name": "DeepSeek V4 Flash",
+              "description": "opencode-zen/deepseek-v4-flash"
+            },
+            {
+              "value": "opencode-zen/deepseek-v4-flash-free",
+              "name": "DeepSeek V4 Flash Free",
+              "description": "opencode-zen/deepseek-v4-flash-free"
+            },
+            {
+              "value": "opencode-zen/deepseek-v4-flash-vision-exp",
+              "name": "DeepSeek V4 Flash Vision Exp",
+              "description": "opencode-zen/deepseek-v4-flash-vision-exp"
+            },
+            {
+              "value": "opencode-zen/deepseek-v4-pro",
+              "name": "DeepSeek V4 Pro",
+              "description": "opencode-zen/deepseek-v4-pro"
+            },
+            {
+              "value": "opencode-zen/deepseek-v4.1-flash",
+              "name": "DeepSeek V4.1 Flash",
+              "description": "opencode-zen/deepseek-v4.1-flash"
+            },
+            {
+              "value": "opencode-zen/gemini-3-flash",
+              "name": "Gemini 3 Flash",
+              "description": "opencode-zen/gemini-3-flash"
+            },
+            {
+              "value": "opencode-zen/gemini-3-pro",
+              "name": "Gemini 3 Pro",
+              "description": "opencode-zen/gemini-3-pro"
+            },
+            {
+              "value": "opencode-zen/gemini-3.1-pro",
+              "name": "Gemini 3.1 Pro Preview",
+              "description": "opencode-zen/gemini-3.1-pro"
+            },
+            {
+              "value": "opencode-zen/gemini-3.5-flash",
+              "name": "Gemini 3.5 Flash",
+              "description": "opencode-zen/gemini-3.5-flash"
+            },
+            {
+              "value": "opencode-zen/gemini-3.5-flash-lite",
+              "name": "Gemini 3.5 Flash Lite",
+              "description": "opencode-zen/gemini-3.5-flash-lite"
+            },
+            {
+              "value": "opencode-zen/gemini-3.6-flash",
+              "name": "Gemini 3.6 Flash",
+              "description": "opencode-zen/gemini-3.6-flash"
+            },
+            {
+              "value": "opencode-zen/gemini-3.7-flash",
+              "name": "Gemini 3.7 Flash",
+              "description": "opencode-zen/gemini-3.7-flash"
+            },
+            {
+              "value": "opencode-zen/gemini-3.8-flash",
+              "name": "Gemini 3.8 Flash",
+              "description": "opencode-zen/gemini-3.8-flash"
+            },
+            {
+              "value": "opencode-zen/glm-4.6",
+              "name": "GLM-4.6",
+              "description": "opencode-zen/glm-4.6"
+            },
+            {
+              "value": "opencode-zen/glm-4.7",
+              "name": "GLM-4.7",
+              "description": "opencode-zen/glm-4.7"
+            },
+            {
+              "value": "opencode-zen/glm-5",
+              "name": "GLM-5",
+              "description": "opencode-zen/glm-5"
+            },
+            {
+              "value": "opencode-zen/glm-5.1",
+              "name": "GLM-5.1",
+              "description": "opencode-zen/glm-5.1"
+            },
+            {
+              "value": "opencode-zen/glm-5.2",
+              "name": "GLM-5.2",
+              "description": "opencode-zen/glm-5.2"
+            },
+            {
+              "value": "opencode-zen/glm-5.3",
+              "name": "GLM-5.3",
+              "description": "opencode-zen/glm-5.3"
+            },
+            {
+              "value": "opencode-zen/glm-5.3-flash",
+              "name": "GLM-5.3-Flash",
+              "description": "opencode-zen/glm-5.3-flash"
+            },
+            {
+              "value": "opencode-zen/gpt-5",
+              "name": "GPT-5",
+              "description": "opencode-zen/gpt-5"
+            },
+            {
+              "value": "opencode-zen/gpt-5-codex",
+              "name": "GPT-5 Codex",
+              "description": "opencode-zen/gpt-5-codex"
+            },
+            {
+              "value": "opencode-zen/gpt-5-nano",
+              "name": "GPT-5 Nano",
+              "description": "opencode-zen/gpt-5-nano"
+            },
+            {
+              "value": "opencode-zen/gpt-5.1",
+              "name": "GPT-5.1",
+              "description": "opencode-zen/gpt-5.1"
+            },
+            {
+              "value": "opencode-zen/gpt-5.1-codex",
+              "name": "GPT-5.1 Codex",
+              "description": "opencode-zen/gpt-5.1-codex"
+            },
+            {
+              "value": "opencode-zen/gpt-5.1-codex-max",
+              "name": "GPT-5.1 Codex Max",
+              "description": "opencode-zen/gpt-5.1-codex-max"
+            },
+            {
+              "value": "opencode-zen/gpt-5.1-codex-mini",
+              "name": "GPT-5.1 Codex Mini",
+              "description": "opencode-zen/gpt-5.1-codex-mini"
+            },
+            {
+              "value": "opencode-zen/gpt-5.2",
+              "name": "GPT-5.2",
+              "description": "opencode-zen/gpt-5.2"
+            },
+            {
+              "value": "opencode-zen/gpt-5.2-codex",
+              "name": "GPT-5.2 Codex",
+              "description": "opencode-zen/gpt-5.2-codex"
+            },
+            {
+              "value": "opencode-zen/gpt-5.3-codex",
+              "name": "GPT-5.3 Codex",
+              "description": "opencode-zen/gpt-5.3-codex"
+            },
+            {
+              "value": "opencode-zen/gpt-5.3-codex-spark",
+              "name": "GPT-5.3 Codex Spark",
+              "description": "opencode-zen/gpt-5.3-codex-spark"
+            },
+            {
+              "value": "opencode-zen/gpt-5.4",
+              "name": "GPT-5.4",
+              "description": "opencode-zen/gpt-5.4"
+            },
+            {
+              "value": "opencode-zen/gpt-5.4-mini",
+              "name": "GPT-5.4 Mini",
+              "description": "opencode-zen/gpt-5.4-mini"
+            },
+            {
+              "value": "opencode-zen/gpt-5.4-nano",
+              "name": "GPT-5.4 Nano",
+              "description": "opencode-zen/gpt-5.4-nano"
+            },
+            {
+              "value": "opencode-zen/gpt-5.4-pro",
+              "name": "GPT-5.4 Pro",
+              "description": "opencode-zen/gpt-5.4-pro"
+            },
+            {
+              "value": "opencode-zen/gpt-5.5",
+              "name": "GPT-5.5",
+              "description": "opencode-zen/gpt-5.5"
+            },
+            {
+              "value": "opencode-zen/gpt-5.5-pro",
+              "name": "GPT-5.5 Pro",
+              "description": "opencode-zen/gpt-5.5-pro"
+            },
+            {
+              "value": "opencode-zen/gpt-5.6-luna",
+              "name": "GPT-5.6 Luna",
+              "description": "opencode-zen/gpt-5.6-luna"
+            },
+            {
+              "value": "opencode-zen/gpt-5.6-sol",
+              "name": "GPT-5.6 Sol",
+              "description": "opencode-zen/gpt-5.6-sol"
+            },
+            {
+              "value": "opencode-zen/gpt-5.6-terra",
+              "name": "GPT-5.6 Terra",
+              "description": "opencode-zen/gpt-5.6-terra"
+            },
+            {
+              "value": "opencode-zen/gpt-6-astra",
+              "name": "GPT-6 Astra",
+              "description": "opencode-zen/gpt-6-astra"
+            },
+            {
+              "value": "opencode-zen/gpt-6-luna",
+              "name": "GPT-6 Luna",
+              "description": "opencode-zen/gpt-6-luna"
+            },
+            {
+              "value": "opencode-zen/gpt-6-sol",
+              "name": "GPT-6 Sol",
+              "description": "opencode-zen/gpt-6-sol"
+            },
+            {
+              "value": "opencode-zen/grok-4.5",
+              "name": "Grok 4.5",
+              "description": "opencode-zen/grok-4.5"
+            },
+            {
+              "value": "opencode-zen/grok-4.6",
+              "name": "Grok 4.6",
+              "description": "opencode-zen/grok-4.6"
+            },
+            {
+              "value": "opencode-zen/grok-4.7",
+              "name": "Grok 4.7 (30% Off)",
+              "description": "opencode-zen/grok-4.7"
+            },
+            {
+              "value": "opencode-zen/grok-build-0.1",
+              "name": "Grok Build 0.1",
+              "description": "opencode-zen/grok-build-0.1"
+            },
+            {
+              "value": "opencode-zen/hy3-free",
+              "name": "Hy3 Free",
+              "description": "opencode-zen/hy3-free"
+            },
+            {
+              "value": "opencode-zen/hy3-preview-free",
+              "name": "Hy3 preview Free",
+              "description": "opencode-zen/hy3-preview-free"
+            },
+            {
+              "value": "opencode-zen/kimi-k2",
+              "name": "Kimi K2",
+              "description": "opencode-zen/kimi-k2"
+            },
+            {
+              "value": "opencode-zen/kimi-k2.5",
+              "name": "Kimi K2.5",
+              "description": "opencode-zen/kimi-k2.5"
+            },
+            {
+              "value": "opencode-zen/kimi-k2.6",
+              "name": "Kimi K2.6",
+              "description": "opencode-zen/kimi-k2.6"
+            },
+            {
+              "value": "opencode-zen/kimi-k2.7-code",
+              "name": "Kimi K2.7 Code",
+              "description": "opencode-zen/kimi-k2.7-code"
+            },
+            {
+              "value": "opencode-zen/kimi-k3",
+              "name": "Kimi K3",
+              "description": "opencode-zen/kimi-k3"
+            },
+            {
+              "value": "opencode-zen/laguna-s-2.1-free",
+              "name": "Laguna S 2.1 Free",
+              "description": "opencode-zen/laguna-s-2.1-free"
+            },
+            {
+              "value": "opencode-zen/ling-2.6-flash-free",
+              "name": "Ling 2.6 Flash Free",
+              "description": "opencode-zen/ling-2.6-flash-free"
+            },
+            {
+              "value": "opencode-zen/ling-3.0-flash-fin-free",
+              "name": "Ling 3.0 Flash Fin Free",
+              "description": "opencode-zen/ling-3.0-flash-fin-free"
+            },
+            {
+              "value": "opencode-zen/ling-3.0-flash-free",
+              "name": "Ling-3.0-flash Free",
+              "description": "opencode-zen/ling-3.0-flash-free"
+            },
+            {
+              "value": "opencode-zen/ling-3.0-tiny-free",
+              "name": "Ling-3.0-tiny Free",
+              "description": "opencode-zen/ling-3.0-tiny-free"
+            },
+            {
+              "value": "opencode-zen/longcat-2.0-free",
+              "name": "LongCat-2.0 Free",
+              "description": "opencode-zen/longcat-2.0-free"
+            },
+            {
+              "value": "opencode-zen/mimo-v2-flash-free",
+              "name": "MiMo V2 Flash Free",
+              "description": "opencode-zen/mimo-v2-flash-free"
+            },
+            {
+              "value": "opencode-zen/mimo-v2-omni-free",
+              "name": "MiMo V2 Omni Free",
+              "description": "opencode-zen/mimo-v2-omni-free"
+            },
+            {
+              "value": "opencode-zen/mimo-v2-pro-free",
+              "name": "MiMo V2 Pro Free",
+              "description": "opencode-zen/mimo-v2-pro-free"
+            },
+            {
+              "value": "opencode-zen/mimo-v2.5-free",
+              "name": "MiMo V2.5 Free",
+              "description": "opencode-zen/mimo-v2.5-free"
+            },
+            {
+              "value": "opencode-zen/mimo-v2.6-flash-free",
+              "name": "MiMo-V2.6-Flash Free",
+              "description": "opencode-zen/mimo-v2.6-flash-free"
+            },
+            {
+              "value": "opencode-zen/minimax-m2.1",
+              "name": "minimax-m2.1",
+              "description": "opencode-zen/minimax-m2.1"
+            },
+            {
+              "value": "opencode-zen/minimax-m2.5",
+              "name": "MiniMax-M2.5",
+              "description": "opencode-zen/minimax-m2.5"
+            },
+            {
+              "value": "opencode-zen/minimax-m2.5-free",
+              "name": "MiniMax M2.5 Free",
+              "description": "opencode-zen/minimax-m2.5-free"
+            },
+            {
+              "value": "opencode-zen/minimax-m2.7",
+              "name": "MiniMax-M2.7",
+              "description": "opencode-zen/minimax-m2.7"
+            },
+            {
+              "value": "opencode-zen/minimax-m3",
+              "name": "MiniMax-M3",
+              "description": "opencode-zen/minimax-m3"
+            },
+            {
+              "value": "opencode-zen/minimax-m3-free",
+              "name": "MiniMax M3 Free",
+              "description": "opencode-zen/minimax-m3-free"
+            },
+            {
+              "value": "opencode-zen/muse-spark-1.2",
+              "name": "Muse Spark 1.2",
+              "description": "opencode-zen/muse-spark-1.2"
+            },
+            {
+              "value": "opencode-zen/muse-spark-1.2-contributor-free",
+              "name": "Muse Spark 1.2 Free",
+              "description": "opencode-zen/muse-spark-1.2-contributor-free"
+            },
+            {
+              "value": "opencode-zen/muse-spark-1.3",
+              "name": "Muse Spark 1.3",
+              "description": "opencode-zen/muse-spark-1.3"
+            },
+            {
+              "value": "opencode-zen/muse-spark-1.3-contributor-free",
+              "name": "Muse Spark 1.3 Free",
+              "description": "opencode-zen/muse-spark-1.3-contributor-free"
+            },
+            {
+              "value": "opencode-zen/nemotron-3-super-free",
+              "name": "Nemotron 3 Super Free",
+              "description": "opencode-zen/nemotron-3-super-free"
+            },
+            {
+              "value": "opencode-zen/nemotron-3-ultra-free",
+              "name": "Nemotron 3 Ultra Free",
+              "description": "opencode-zen/nemotron-3-ultra-free"
+            },
+            {
+              "value": "opencode-zen/nemotron-3.5-lightning-free",
+              "name": "Nemotron 3.5 Lightning Free",
+              "description": "opencode-zen/nemotron-3.5-lightning-free"
+            },
+            {
+              "value": "opencode-zen/north-mini-code-free",
+              "name": "North Mini Code Free",
+              "description": "opencode-zen/north-mini-code-free"
+            },
+            {
+              "value": "opencode-zen/qwen3.5-plus",
+              "name": "Qwen3.5 Plus",
+              "description": "opencode-zen/qwen3.5-plus"
+            },
+            {
+              "value": "opencode-zen/qwen3.6-plus",
+              "name": "Qwen3.6 Plus",
+              "description": "opencode-zen/qwen3.6-plus"
+            },
+            {
+              "value": "opencode-zen/qwen3.6-plus-free",
+              "name": "Qwen3.6 Plus Free",
+              "description": "opencode-zen/qwen3.6-plus-free"
+            },
+            {
+              "value": "opencode-zen/qwen3.8-flash",
+              "name": "Qwen3.8 Flash",
+              "description": "opencode-zen/qwen3.8-flash"
+            },
+            {
+              "value": "opencode-zen/ring-2.6-1t-free",
+              "name": "Ring 2.6 1T Free",
+              "description": "opencode-zen/ring-2.6-1t-free"
+            },
+            {
+              "value": "opencode-zen/space-bunny-free",
+              "name": "Space Bunny Free",
+              "description": "opencode-zen/space-bunny-free"
+            },
+            {
+              "value": "opencode-zen/trinity-large-preview-free",
+              "name": "Trinity Large Preview",
+              "description": "opencode-zen/trinity-large-preview-free"
+            },
+            {
+              "value": "opencode-zen/x-preview-f-free",
+              "name": "Ox Alpha Free (Unlimited)",
+              "description": "opencode-zen/x-preview-f-free"
+            },
+            {
+              "value": "opencode-zen/claude-haiku-5-5",
+              "name": "claude-haiku-5-5",
+              "description": "opencode-zen/claude-haiku-5-5"
+            },
+            {
+              "value": "opencode-zen/claude-sonnet-5-5",
+              "name": "claude-sonnet-5-5",
+              "description": "opencode-zen/claude-sonnet-5-5"
+            },
+            {
+              "value": "opencode-zen/fledge-alpha-free",
+              "name": "fledge-alpha-free",
+              "description": "opencode-zen/fledge-alpha-free"
+            },
+            {
+              "value": "opencode-zen/gpt-6.1-sol",
+              "name": "gpt-6.1-sol",
+              "description": "opencode-zen/gpt-6.1-sol"
+            },
+            {
+              "value": "opencode-zen/jev-1.13",
+              "name": "jev-1.13",
+              "description": "opencode-zen/jev-1.13"
+            },
+            {
+              "value": "opencode-zen/jev-1.13-free",
+              "name": "jev-1.13-free",
+              "description": "opencode-zen/jev-1.13-free"
+            },
+            {
+              "value": "opencode-zen/ling-3.1-flash-free",
+              "name": "ling-3.1-flash-free",
+              "description": "opencode-zen/ling-3.1-flash-free"
+            },
+            {
+              "value": "opencode-zen/longcat-2.5-preview-free",
+              "name": "longcat-2.5-preview-free",
+              "description": "opencode-zen/longcat-2.5-preview-free"
+            },
+            {
+              "value": "opencode-zen/mistral-large-4",
+              "name": "mistral-large-4",
+              "description": "opencode-zen/mistral-large-4"
+            },
+            {
+              "value": "opencode-zen/test",
+              "name": "test",
+              "description": "opencode-zen/test"
+            },
+            {
+              "value": "zhipu-coding/glm-5.3-flash",
+              "name": "GLM-5.3-Flash (Coding Plan)",
+              "description": "zhipu-coding/glm-5.3-flash"
+            },
+            {
+              "value": "zhipu-coding/glm-5.3",
+              "name": "GLM-5.3 (Coding Plan)",
+              "description": "zhipu-coding/glm-5.3"
+            },
+            {
+              "value": "zhipu-coding/glm-5.3-flashx",
+              "name": "GLM-5.3-FlashX (Coding Plan)",
+              "description": "zhipu-coding/glm-5.3-flashx"
+            }
+          ]
+        },
+        {
+          "id": "thinking",
+          "name": "Thinking",
+          "category": "thought_level",
+          "type": "select",
+          "currentValue": "high",
+          "options": [
+            {
+              "value": "off",
+              "name": "Off"
+            },
+            {
+              "value": "auto",
+              "name": "Auto",
+              "description": "Auto-detect per prompt"
+            },
+            {
+              "value": "low",
+              "name": "low"
+            },
+            {
+              "value": "high",
+              "name": "high"
+            },
+            {
+              "value": "max",
+              "name": "max"
+            }
+          ]
+        }
+      ],
+      "raw": {
+        "sessionId": "01a11a43-9dc0-7459-9340-2d1b52143b5f",
+        "configOptions": [
+          {
+            "id": "mode",
+            "name": "Mode",
+            "category": "mode",
+            "type": "select",
+            "currentValue": "default",
+            "options": [
+              {
+                "value": "default",
+                "name": "Default",
+                "description": "Standard ACP headless mode"
+              },
+              {
+                "value": "plan",
+                "name": "Plan",
+                "description": "Read-only planning mode that drafts a plan to a markdown file before any code changes"
+              }
+            ]
+          },
+          {
+            "id": "model",
+            "name": "Model",
+            "category": "model",
+            "type": "select",
+            "currentValue": "deepseek/deepseek-v4-pro",
+            "options": [
+              {
+                "value": "deepseek/deepseek-flash",
+                "name": "DeepSeek-V4.1-Flash",
+                "description": "deepseek/deepseek-flash"
+              },
+              {
+                "value": "deepseek/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "deepseek/deepseek-v4-flash"
+              },
+              {
+                "value": "deepseek/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "deepseek/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "deepseek/deepseek-v4-pro",
+                "name": "DeepSeek-V4-Pro",
+                "description": "deepseek/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "opencode-go/deepseek-v4-flash"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "opencode-go/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-pro",
+                "name": "DeepSeek V4 Pro (New)",
+                "description": "opencode-go/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-go/deepseek-v4.1-flash",
+                "name": "DeepSeek V4.1 Flash",
+                "description": "opencode-go/deepseek-v4.1-flash"
+              },
+              {
+                "value": "opencode-go/glm-5",
+                "name": "GLM-5",
+                "description": "opencode-go/glm-5"
+              },
+              {
+                "value": "opencode-go/glm-5.1",
+                "name": "GLM-5.1",
+                "description": "opencode-go/glm-5.1"
+              },
+              {
+                "value": "opencode-go/glm-5.2",
+                "name": "GLM-5.2",
+                "description": "opencode-go/glm-5.2"
+              },
+              {
+                "value": "opencode-go/glm-5.3",
+                "name": "GLM-5.3",
+                "description": "opencode-go/glm-5.3"
+              },
+              {
+                "value": "opencode-go/glm-5.3-flash",
+                "name": "GLM-5.3-Flash",
+                "description": "opencode-go/glm-5.3-flash"
+              },
+              {
+                "value": "opencode-go/gpt-5.6-luna",
+                "name": "GPT-5.6 Luna",
+                "description": "opencode-go/gpt-5.6-luna"
+              },
+              {
+                "value": "opencode-go/gpt-6-luna",
+                "name": "GPT-6 Luna",
+                "description": "opencode-go/gpt-6-luna"
+              },
+              {
+                "value": "opencode-go/grok-4.5",
+                "name": "Grok 4.5",
+                "description": "opencode-go/grok-4.5"
+              },
+              {
+                "value": "opencode-go/grok-4.6",
+                "name": "Grok 4.6",
+                "description": "opencode-go/grok-4.6"
+              },
+              {
+                "value": "opencode-go/grok-4.7",
+                "name": "Grok 4.7",
+                "description": "opencode-go/grok-4.7"
+              },
+              {
+                "value": "opencode-go/hy3",
+                "name": "Hy3",
+                "description": "opencode-go/hy3"
+              },
+              {
+                "value": "opencode-go/hy4-preview",
+                "name": "Hy4 preview",
+                "description": "opencode-go/hy4-preview"
+              },
+              {
+                "value": "opencode-go/kimi-k2.5",
+                "name": "kimi-k2.5",
+                "description": "opencode-go/kimi-k2.5"
+              },
+              {
+                "value": "opencode-go/kimi-k2.6",
+                "name": "Kimi K2.6",
+                "description": "opencode-go/kimi-k2.6"
+              },
+              {
+                "value": "opencode-go/kimi-k2.7-code",
+                "name": "Kimi K2.7 Code",
+                "description": "opencode-go/kimi-k2.7-code"
+              },
+              {
+                "value": "opencode-go/kimi-k3",
+                "name": "Kimi K3",
+                "description": "opencode-go/kimi-k3"
+              },
+              {
+                "value": "opencode-go/longcat-2.0",
+                "name": "LongCat-2.0",
+                "description": "opencode-go/longcat-2.0"
+              },
+              {
+                "value": "opencode-go/mimo-v2-omni",
+                "name": "MiMo-V2-Omni",
+                "description": "opencode-go/mimo-v2-omni"
+              },
+              {
+                "value": "opencode-go/mimo-v2-pro",
+                "name": "MiMo-V2-Pro",
+                "description": "opencode-go/mimo-v2-pro"
+              },
+              {
+                "value": "opencode-go/mimo-v2.5",
+                "name": "MiMo V2.5",
+                "description": "opencode-go/mimo-v2.5"
+              },
+              {
+                "value": "opencode-go/mimo-v2.5-pro",
+                "name": "MiMo V2.5 Pro",
+                "description": "opencode-go/mimo-v2.5-pro"
+              },
+              {
+                "value": "opencode-go/mimo-v2.6-flash",
+                "name": "MiMo-V2.6-Flash",
+                "description": "opencode-go/mimo-v2.6-flash"
+              },
+              {
+                "value": "opencode-go/mimo-v2.6-pro",
+                "name": "MiMo-V2.6-Pro",
+                "description": "opencode-go/mimo-v2.6-pro"
+              },
+              {
+                "value": "opencode-go/minimax-m2.5",
+                "name": "MiniMax-M2.5",
+                "description": "opencode-go/minimax-m2.5"
+              },
+              {
+                "value": "opencode-go/minimax-m2.7",
+                "name": "MiniMax-M2.7",
+                "description": "opencode-go/minimax-m2.7"
+              },
+              {
+                "value": "opencode-go/minimax-m3",
+                "name": "MiniMax-M3",
+                "description": "opencode-go/minimax-m3"
+              },
+              {
+                "value": "opencode-go/muse-spark-1.2-contributor",
+                "name": "Muse Spark 1.2 Contributor",
+                "description": "opencode-go/muse-spark-1.2-contributor"
+              },
+              {
+                "value": "opencode-go/muse-spark-1.3-contributor",
+                "name": "Muse Spark 1.3 Contributor",
+                "description": "opencode-go/muse-spark-1.3-contributor"
+              },
+              {
+                "value": "opencode-go/ox-alpha-free",
+                "name": "Ox Alpha Free (Unlimited)",
+                "description": "opencode-go/ox-alpha-free"
+              },
+              {
+                "value": "opencode-go/qwen3.5-plus",
+                "name": "Qwen3.5 Plus",
+                "description": "opencode-go/qwen3.5-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.6-plus",
+                "name": "Qwen3.6 Plus",
+                "description": "opencode-go/qwen3.6-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.7-max",
+                "name": "Qwen3.7 Max",
+                "description": "opencode-go/qwen3.7-max"
+              },
+              {
+                "value": "opencode-go/qwen3.7-plus",
+                "name": "Qwen3.7 Plus",
+                "description": "opencode-go/qwen3.7-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.8-flash",
+                "name": "Qwen3.8 Flash",
+                "description": "opencode-go/qwen3.8-flash"
+              },
+              {
+                "value": "opencode-go/qwen3.8-max",
+                "name": "Qwen3.8 Max",
+                "description": "opencode-go/qwen3.8-max"
+              },
+              {
+                "value": "opencode-go/space-bunny-free",
+                "name": "Space Bunny Free",
+                "description": "opencode-go/space-bunny-free"
+              },
+              {
+                "value": "opencode-go/claude-haiku-5-5",
+                "name": "Claude Haiku 5.5",
+                "description": "opencode-go/claude-haiku-5-5"
+              },
+              {
+                "value": "opencode-go/longcat-2.5-preview-free",
+                "name": "LongCat 2.5 Preview Free",
+                "description": "opencode-go/longcat-2.5-preview-free"
+              },
+              {
+                "value": "opencode-go/space-bunny",
+                "name": "Space Bunny",
+                "description": "opencode-go/space-bunny"
+              },
+              {
+                "value": "opencode-go/deepseek-flash",
+                "name": "deepseek-flash",
+                "description": "opencode-go/deepseek-flash"
+              },
+              {
+                "value": "opencode-go/omen-alpha",
+                "name": "omen-alpha",
+                "description": "opencode-go/omen-alpha"
+              },
+              {
+                "value": "opencode-zen/big-pickle",
+                "name": "Big Pickle",
+                "description": "opencode-zen/big-pickle"
+              },
+              {
+                "value": "opencode-zen/claude-3-5-haiku",
+                "name": "Claude Haiku 3.5",
+                "description": "opencode-zen/claude-3-5-haiku"
+              },
+              {
+                "value": "opencode-zen/claude-fable-5",
+                "name": "Claude Fable 5",
+                "description": "opencode-zen/claude-fable-5"
+              },
+              {
+                "value": "opencode-zen/claude-fable-5-1",
+                "name": "Claude Fable 5.1",
+                "description": "opencode-zen/claude-fable-5-1"
+              },
+              {
+                "value": "opencode-zen/claude-haiku-4-5",
+                "name": "Claude Haiku 4.5",
+                "description": "opencode-zen/claude-haiku-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-1",
+                "name": "Claude Opus 4.1",
+                "description": "opencode-zen/claude-opus-4-1"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-5",
+                "name": "Claude Opus 4.5",
+                "description": "opencode-zen/claude-opus-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-6",
+                "name": "Claude Opus 4.6",
+                "description": "opencode-zen/claude-opus-4-6"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-7",
+                "name": "Claude Opus 4.7",
+                "description": "opencode-zen/claude-opus-4-7"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-8",
+                "name": "Claude Opus 4.8",
+                "description": "opencode-zen/claude-opus-4-8"
+              },
+              {
+                "value": "opencode-zen/claude-opus-5",
+                "name": "Claude Opus 5",
+                "description": "opencode-zen/claude-opus-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-5-5",
+                "name": "Claude Opus 5.5",
+                "description": "opencode-zen/claude-opus-5-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4",
+                "name": "Claude Sonnet 4",
+                "description": "opencode-zen/claude-sonnet-4"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4-5",
+                "name": "Claude Sonnet 4.5",
+                "description": "opencode-zen/claude-sonnet-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4-6",
+                "name": "Claude Sonnet 4.6",
+                "description": "opencode-zen/claude-sonnet-4-6"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-5",
+                "name": "Claude Sonnet 5",
+                "description": "opencode-zen/claude-sonnet-5"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "opencode-zen/deepseek-v4-flash"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash-free",
+                "name": "DeepSeek V4 Flash Free",
+                "description": "opencode-zen/deepseek-v4-flash-free"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "opencode-zen/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-pro",
+                "name": "DeepSeek V4 Pro",
+                "description": "opencode-zen/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4.1-flash",
+                "name": "DeepSeek V4.1 Flash",
+                "description": "opencode-zen/deepseek-v4.1-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3-flash",
+                "name": "Gemini 3 Flash",
+                "description": "opencode-zen/gemini-3-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3-pro",
+                "name": "Gemini 3 Pro",
+                "description": "opencode-zen/gemini-3-pro"
+              },
+              {
+                "value": "opencode-zen/gemini-3.1-pro",
+                "name": "Gemini 3.1 Pro Preview",
+                "description": "opencode-zen/gemini-3.1-pro"
+              },
+              {
+                "value": "opencode-zen/gemini-3.5-flash",
+                "name": "Gemini 3.5 Flash",
+                "description": "opencode-zen/gemini-3.5-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.5-flash-lite",
+                "name": "Gemini 3.5 Flash Lite",
+                "description": "opencode-zen/gemini-3.5-flash-lite"
+              },
+              {
+                "value": "opencode-zen/gemini-3.6-flash",
+                "name": "Gemini 3.6 Flash",
+                "description": "opencode-zen/gemini-3.6-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.7-flash",
+                "name": "Gemini 3.7 Flash",
+                "description": "opencode-zen/gemini-3.7-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.8-flash",
+                "name": "Gemini 3.8 Flash",
+                "description": "opencode-zen/gemini-3.8-flash"
+              },
+              {
+                "value": "opencode-zen/glm-4.6",
+                "name": "GLM-4.6",
+                "description": "opencode-zen/glm-4.6"
+              },
+              {
+                "value": "opencode-zen/glm-4.7",
+                "name": "GLM-4.7",
+                "description": "opencode-zen/glm-4.7"
+              },
+              {
+                "value": "opencode-zen/glm-5",
+                "name": "GLM-5",
+                "description": "opencode-zen/glm-5"
+              },
+              {
+                "value": "opencode-zen/glm-5.1",
+                "name": "GLM-5.1",
+                "description": "opencode-zen/glm-5.1"
+              },
+              {
+                "value": "opencode-zen/glm-5.2",
+                "name": "GLM-5.2",
+                "description": "opencode-zen/glm-5.2"
+              },
+              {
+                "value": "opencode-zen/glm-5.3",
+                "name": "GLM-5.3",
+                "description": "opencode-zen/glm-5.3"
+              },
+              {
+                "value": "opencode-zen/glm-5.3-flash",
+                "name": "GLM-5.3-Flash",
+                "description": "opencode-zen/glm-5.3-flash"
+              },
+              {
+                "value": "opencode-zen/gpt-5",
+                "name": "GPT-5",
+                "description": "opencode-zen/gpt-5"
+              },
+              {
+                "value": "opencode-zen/gpt-5-codex",
+                "name": "GPT-5 Codex",
+                "description": "opencode-zen/gpt-5-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5-nano",
+                "name": "GPT-5 Nano",
+                "description": "opencode-zen/gpt-5-nano"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1",
+                "name": "GPT-5.1",
+                "description": "opencode-zen/gpt-5.1"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex",
+                "name": "GPT-5.1 Codex",
+                "description": "opencode-zen/gpt-5.1-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex-max",
+                "name": "GPT-5.1 Codex Max",
+                "description": "opencode-zen/gpt-5.1-codex-max"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex-mini",
+                "name": "GPT-5.1 Codex Mini",
+                "description": "opencode-zen/gpt-5.1-codex-mini"
+              },
+              {
+                "value": "opencode-zen/gpt-5.2",
+                "name": "GPT-5.2",
+                "description": "opencode-zen/gpt-5.2"
+              },
+              {
+                "value": "opencode-zen/gpt-5.2-codex",
+                "name": "GPT-5.2 Codex",
+                "description": "opencode-zen/gpt-5.2-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.3-codex",
+                "name": "GPT-5.3 Codex",
+                "description": "opencode-zen/gpt-5.3-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.3-codex-spark",
+                "name": "GPT-5.3 Codex Spark",
+                "description": "opencode-zen/gpt-5.3-codex-spark"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4",
+                "name": "GPT-5.4",
+                "description": "opencode-zen/gpt-5.4"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-mini",
+                "name": "GPT-5.4 Mini",
+                "description": "opencode-zen/gpt-5.4-mini"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-nano",
+                "name": "GPT-5.4 Nano",
+                "description": "opencode-zen/gpt-5.4-nano"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-pro",
+                "name": "GPT-5.4 Pro",
+                "description": "opencode-zen/gpt-5.4-pro"
+              },
+              {
+                "value": "opencode-zen/gpt-5.5",
+                "name": "GPT-5.5",
+                "description": "opencode-zen/gpt-5.5"
+              },
+              {
+                "value": "opencode-zen/gpt-5.5-pro",
+                "name": "GPT-5.5 Pro",
+                "description": "opencode-zen/gpt-5.5-pro"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-luna",
+                "name": "GPT-5.6 Luna",
+                "description": "opencode-zen/gpt-5.6-luna"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-sol",
+                "name": "GPT-5.6 Sol",
+                "description": "opencode-zen/gpt-5.6-sol"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-terra",
+                "name": "GPT-5.6 Terra",
+                "description": "opencode-zen/gpt-5.6-terra"
+              },
+              {
+                "value": "opencode-zen/gpt-6-astra",
+                "name": "GPT-6 Astra",
+                "description": "opencode-zen/gpt-6-astra"
+              },
+              {
+                "value": "opencode-zen/gpt-6-luna",
+                "name": "GPT-6 Luna",
+                "description": "opencode-zen/gpt-6-luna"
+              },
+              {
+                "value": "opencode-zen/gpt-6-sol",
+                "name": "GPT-6 Sol",
+                "description": "opencode-zen/gpt-6-sol"
+              },
+              {
+                "value": "opencode-zen/grok-4.5",
+                "name": "Grok 4.5",
+                "description": "opencode-zen/grok-4.5"
+              },
+              {
+                "value": "opencode-zen/grok-4.6",
+                "name": "Grok 4.6",
+                "description": "opencode-zen/grok-4.6"
+              },
+              {
+                "value": "opencode-zen/grok-4.7",
+                "name": "Grok 4.7 (30% Off)",
+                "description": "opencode-zen/grok-4.7"
+              },
+              {
+                "value": "opencode-zen/grok-build-0.1",
+                "name": "Grok Build 0.1",
+                "description": "opencode-zen/grok-build-0.1"
+              },
+              {
+                "value": "opencode-zen/hy3-free",
+                "name": "Hy3 Free",
+                "description": "opencode-zen/hy3-free"
+              },
+              {
+                "value": "opencode-zen/hy3-preview-free",
+                "name": "Hy3 preview Free",
+                "description": "opencode-zen/hy3-preview-free"
+              },
+              {
+                "value": "opencode-zen/kimi-k2",
+                "name": "Kimi K2",
+                "description": "opencode-zen/kimi-k2"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.5",
+                "name": "Kimi K2.5",
+                "description": "opencode-zen/kimi-k2.5"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.6",
+                "name": "Kimi K2.6",
+                "description": "opencode-zen/kimi-k2.6"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.7-code",
+                "name": "Kimi K2.7 Code",
+                "description": "opencode-zen/kimi-k2.7-code"
+              },
+              {
+                "value": "opencode-zen/kimi-k3",
+                "name": "Kimi K3",
+                "description": "opencode-zen/kimi-k3"
+              },
+              {
+                "value": "opencode-zen/laguna-s-2.1-free",
+                "name": "Laguna S 2.1 Free",
+                "description": "opencode-zen/laguna-s-2.1-free"
+              },
+              {
+                "value": "opencode-zen/ling-2.6-flash-free",
+                "name": "Ling 2.6 Flash Free",
+                "description": "opencode-zen/ling-2.6-flash-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-flash-fin-free",
+                "name": "Ling 3.0 Flash Fin Free",
+                "description": "opencode-zen/ling-3.0-flash-fin-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-flash-free",
+                "name": "Ling-3.0-flash Free",
+                "description": "opencode-zen/ling-3.0-flash-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-tiny-free",
+                "name": "Ling-3.0-tiny Free",
+                "description": "opencode-zen/ling-3.0-tiny-free"
+              },
+              {
+                "value": "opencode-zen/longcat-2.0-free",
+                "name": "LongCat-2.0 Free",
+                "description": "opencode-zen/longcat-2.0-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-flash-free",
+                "name": "MiMo V2 Flash Free",
+                "description": "opencode-zen/mimo-v2-flash-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-omni-free",
+                "name": "MiMo V2 Omni Free",
+                "description": "opencode-zen/mimo-v2-omni-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-pro-free",
+                "name": "MiMo V2 Pro Free",
+                "description": "opencode-zen/mimo-v2-pro-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2.5-free",
+                "name": "MiMo V2.5 Free",
+                "description": "opencode-zen/mimo-v2.5-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2.6-flash-free",
+                "name": "MiMo-V2.6-Flash Free",
+                "description": "opencode-zen/mimo-v2.6-flash-free"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.1",
+                "name": "minimax-m2.1",
+                "description": "opencode-zen/minimax-m2.1"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.5",
+                "name": "MiniMax-M2.5",
+                "description": "opencode-zen/minimax-m2.5"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.5-free",
+                "name": "MiniMax M2.5 Free",
+                "description": "opencode-zen/minimax-m2.5-free"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.7",
+                "name": "MiniMax-M2.7",
+                "description": "opencode-zen/minimax-m2.7"
+              },
+              {
+                "value": "opencode-zen/minimax-m3",
+                "name": "MiniMax-M3",
+                "description": "opencode-zen/minimax-m3"
+              },
+              {
+                "value": "opencode-zen/minimax-m3-free",
+                "name": "MiniMax M3 Free",
+                "description": "opencode-zen/minimax-m3-free"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.2",
+                "name": "Muse Spark 1.2",
+                "description": "opencode-zen/muse-spark-1.2"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.2-contributor-free",
+                "name": "Muse Spark 1.2 Free",
+                "description": "opencode-zen/muse-spark-1.2-contributor-free"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.3",
+                "name": "Muse Spark 1.3",
+                "description": "opencode-zen/muse-spark-1.3"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.3-contributor-free",
+                "name": "Muse Spark 1.3 Free",
+                "description": "opencode-zen/muse-spark-1.3-contributor-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3-super-free",
+                "name": "Nemotron 3 Super Free",
+                "description": "opencode-zen/nemotron-3-super-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3-ultra-free",
+                "name": "Nemotron 3 Ultra Free",
+                "description": "opencode-zen/nemotron-3-ultra-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3.5-lightning-free",
+                "name": "Nemotron 3.5 Lightning Free",
+                "description": "opencode-zen/nemotron-3.5-lightning-free"
+              },
+              {
+                "value": "opencode-zen/north-mini-code-free",
+                "name": "North Mini Code Free",
+                "description": "opencode-zen/north-mini-code-free"
+              },
+              {
+                "value": "opencode-zen/qwen3.5-plus",
+                "name": "Qwen3.5 Plus",
+                "description": "opencode-zen/qwen3.5-plus"
+              },
+              {
+                "value": "opencode-zen/qwen3.6-plus",
+                "name": "Qwen3.6 Plus",
+                "description": "opencode-zen/qwen3.6-plus"
+              },
+              {
+                "value": "opencode-zen/qwen3.6-plus-free",
+                "name": "Qwen3.6 Plus Free",
+                "description": "opencode-zen/qwen3.6-plus-free"
+              },
+              {
+                "value": "opencode-zen/qwen3.8-flash",
+                "name": "Qwen3.8 Flash",
+                "description": "opencode-zen/qwen3.8-flash"
+              },
+              {
+                "value": "opencode-zen/ring-2.6-1t-free",
+                "name": "Ring 2.6 1T Free",
+                "description": "opencode-zen/ring-2.6-1t-free"
+              },
+              {
+                "value": "opencode-zen/space-bunny-free",
+                "name": "Space Bunny Free",
+                "description": "opencode-zen/space-bunny-free"
+              },
+              {
+                "value": "opencode-zen/trinity-large-preview-free",
+                "name": "Trinity Large Preview",
+                "description": "opencode-zen/trinity-large-preview-free"
+              },
+              {
+                "value": "opencode-zen/x-preview-f-free",
+                "name": "Ox Alpha Free (Unlimited)",
+                "description": "opencode-zen/x-preview-f-free"
+              },
+              {
+                "value": "opencode-zen/claude-haiku-5-5",
+                "name": "claude-haiku-5-5",
+                "description": "opencode-zen/claude-haiku-5-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-5-5",
+                "name": "claude-sonnet-5-5",
+                "description": "opencode-zen/claude-sonnet-5-5"
+              },
+              {
+                "value": "opencode-zen/fledge-alpha-free",
+                "name": "fledge-alpha-free",
+                "description": "opencode-zen/fledge-alpha-free"
+              },
+              {
+                "value": "opencode-zen/gpt-6.1-sol",
+                "name": "gpt-6.1-sol",
+                "description": "opencode-zen/gpt-6.1-sol"
+              },
+              {
+                "value": "opencode-zen/jev-1.13",
+                "name": "jev-1.13",
+                "description": "opencode-zen/jev-1.13"
+              },
+              {
+                "value": "opencode-zen/jev-1.13-free",
+                "name": "jev-1.13-free",
+                "description": "opencode-zen/jev-1.13-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.1-flash-free",
+                "name": "ling-3.1-flash-free",
+                "description": "opencode-zen/ling-3.1-flash-free"
+              },
+              {
+                "value": "opencode-zen/longcat-2.5-preview-free",
+                "name": "longcat-2.5-preview-free",
+                "description": "opencode-zen/longcat-2.5-preview-free"
+              },
+              {
+                "value": "opencode-zen/mistral-large-4",
+                "name": "mistral-large-4",
+                "description": "opencode-zen/mistral-large-4"
+              },
+              {
+                "value": "opencode-zen/test",
+                "name": "test",
+                "description": "opencode-zen/test"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3-flash",
+                "name": "GLM-5.3-Flash (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3-flash"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3",
+                "name": "GLM-5.3 (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3-flashx",
+                "name": "GLM-5.3-FlashX (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3-flashx"
+              }
+            ]
+          },
+          {
+            "id": "thinking",
+            "name": "Thinking",
+            "category": "thought_level",
+            "type": "select",
+            "currentValue": "high",
+            "options": [
+              {
+                "value": "off",
+                "name": "Off"
+              },
+              {
+                "value": "auto",
+                "name": "Auto",
+                "description": "Auto-detect per prompt"
+              },
+              {
+                "value": "low",
+                "name": "low"
+              },
+              {
+                "value": "high",
+                "name": "high"
+              },
+              {
+                "value": "max",
+                "name": "max"
+              }
+            ]
+          }
+        ],
+        "modes": {
+          "availableModes": [
+            {
+              "id": "default",
+              "name": "Default",
+              "description": "Standard ACP headless mode"
+            },
+            {
+              "id": "plan",
+              "name": "Plan",
+              "description": "Read-only planning mode that drafts a plan to a markdown file before any code changes"
+            }
+          ],
+          "currentModeId": "default"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "ok": true,
+      "sessionId": "01a11a43-9fc4-7706-b91f-f2115c457845",
+      "raw": {
+        "sessionId": "01a11a43-9fc4-7706-b91f-f2115c457845",
+        "configOptions": [
+          {
+            "id": "mode",
+            "name": "Mode",
+            "category": "mode",
+            "type": "select",
+            "currentValue": "default",
+            "options": [
+              {
+                "value": "default",
+                "name": "Default",
+                "description": "Standard ACP headless mode"
+              },
+              {
+                "value": "plan",
+                "name": "Plan",
+                "description": "Read-only planning mode that drafts a plan to a markdown file before any code changes"
+              }
+            ]
+          },
+          {
+            "id": "model",
+            "name": "Model",
+            "category": "model",
+            "type": "select",
+            "currentValue": "deepseek/deepseek-v4-pro",
+            "options": [
+              {
+                "value": "deepseek/deepseek-flash",
+                "name": "DeepSeek-V4.1-Flash",
+                "description": "deepseek/deepseek-flash"
+              },
+              {
+                "value": "deepseek/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "deepseek/deepseek-v4-flash"
+              },
+              {
+                "value": "deepseek/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "deepseek/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "deepseek/deepseek-v4-pro",
+                "name": "DeepSeek-V4-Pro",
+                "description": "deepseek/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "opencode-go/deepseek-v4-flash"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "opencode-go/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-pro",
+                "name": "DeepSeek V4 Pro (New)",
+                "description": "opencode-go/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-go/deepseek-v4.1-flash",
+                "name": "DeepSeek V4.1 Flash",
+                "description": "opencode-go/deepseek-v4.1-flash"
+              },
+              {
+                "value": "opencode-go/glm-5",
+                "name": "GLM-5",
+                "description": "opencode-go/glm-5"
+              },
+              {
+                "value": "opencode-go/glm-5.1",
+                "name": "GLM-5.1",
+                "description": "opencode-go/glm-5.1"
+              },
+              {
+                "value": "opencode-go/glm-5.2",
+                "name": "GLM-5.2",
+                "description": "opencode-go/glm-5.2"
+              },
+              {
+                "value": "opencode-go/glm-5.3",
+                "name": "GLM-5.3",
+                "description": "opencode-go/glm-5.3"
+              },
+              {
+                "value": "opencode-go/glm-5.3-flash",
+                "name": "GLM-5.3-Flash",
+                "description": "opencode-go/glm-5.3-flash"
+              },
+              {
+                "value": "opencode-go/gpt-5.6-luna",
+                "name": "GPT-5.6 Luna",
+                "description": "opencode-go/gpt-5.6-luna"
+              },
+              {
+                "value": "opencode-go/gpt-6-luna",
+                "name": "GPT-6 Luna",
+                "description": "opencode-go/gpt-6-luna"
+              },
+              {
+                "value": "opencode-go/grok-4.5",
+                "name": "Grok 4.5",
+                "description": "opencode-go/grok-4.5"
+              },
+              {
+                "value": "opencode-go/grok-4.6",
+                "name": "Grok 4.6",
+                "description": "opencode-go/grok-4.6"
+              },
+              {
+                "value": "opencode-go/grok-4.7",
+                "name": "Grok 4.7",
+                "description": "opencode-go/grok-4.7"
+              },
+              {
+                "value": "opencode-go/hy3",
+                "name": "Hy3",
+                "description": "opencode-go/hy3"
+              },
+              {
+                "value": "opencode-go/hy4-preview",
+                "name": "Hy4 preview",
+                "description": "opencode-go/hy4-preview"
+              },
+              {
+                "value": "opencode-go/kimi-k2.5",
+                "name": "kimi-k2.5",
+                "description": "opencode-go/kimi-k2.5"
+              },
+              {
+                "value": "opencode-go/kimi-k2.6",
+                "name": "Kimi K2.6",
+                "description": "opencode-go/kimi-k2.6"
+              },
+              {
+                "value": "opencode-go/kimi-k2.7-code",
+                "name": "Kimi K2.7 Code",
+                "description": "opencode-go/kimi-k2.7-code"
+              },
+              {
+                "value": "opencode-go/kimi-k3",
+                "name": "Kimi K3",
+                "description": "opencode-go/kimi-k3"
+              },
+              {
+                "value": "opencode-go/longcat-2.0",
+                "name": "LongCat-2.0",
+                "description": "opencode-go/longcat-2.0"
+              },
+              {
+                "value": "opencode-go/mimo-v2-omni",
+                "name": "MiMo-V2-Omni",
+                "description": "opencode-go/mimo-v2-omni"
+              },
+              {
+                "value": "opencode-go/mimo-v2-pro",
+                "name": "MiMo-V2-Pro",
+                "description": "opencode-go/mimo-v2-pro"
+              },
+              {
+                "value": "opencode-go/mimo-v2.5",
+                "name": "MiMo V2.5",
+                "description": "opencode-go/mimo-v2.5"
+              },
+              {
+                "value": "opencode-go/mimo-v2.5-pro",
+                "name": "MiMo V2.5 Pro",
+                "description": "opencode-go/mimo-v2.5-pro"
+              },
+              {
+                "value": "opencode-go/mimo-v2.6-flash",
+                "name": "MiMo-V2.6-Flash",
+                "description": "opencode-go/mimo-v2.6-flash"
+              },
+              {
+                "value": "opencode-go/mimo-v2.6-pro",
+                "name": "MiMo-V2.6-Pro",
+                "description": "opencode-go/mimo-v2.6-pro"
+              },
+              {
+                "value": "opencode-go/minimax-m2.5",
+                "name": "MiniMax-M2.5",
+                "description": "opencode-go/minimax-m2.5"
+              },
+              {
+                "value": "opencode-go/minimax-m2.7",
+                "name": "MiniMax-M2.7",
+                "description": "opencode-go/minimax-m2.7"
+              },
+              {
+                "value": "opencode-go/minimax-m3",
+                "name": "MiniMax-M3",
+                "description": "opencode-go/minimax-m3"
+              },
+              {
+                "value": "opencode-go/muse-spark-1.2-contributor",
+                "name": "Muse Spark 1.2 Contributor",
+                "description": "opencode-go/muse-spark-1.2-contributor"
+              },
+              {
+                "value": "opencode-go/muse-spark-1.3-contributor",
+                "name": "Muse Spark 1.3 Contributor",
+                "description": "opencode-go/muse-spark-1.3-contributor"
+              },
+              {
+                "value": "opencode-go/ox-alpha-free",
+                "name": "Ox Alpha Free (Unlimited)",
+                "description": "opencode-go/ox-alpha-free"
+              },
+              {
+                "value": "opencode-go/qwen3.5-plus",
+                "name": "Qwen3.5 Plus",
+                "description": "opencode-go/qwen3.5-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.6-plus",
+                "name": "Qwen3.6 Plus",
+                "description": "opencode-go/qwen3.6-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.7-max",
+                "name": "Qwen3.7 Max",
+                "description": "opencode-go/qwen3.7-max"
+              },
+              {
+                "value": "opencode-go/qwen3.7-plus",
+                "name": "Qwen3.7 Plus",
+                "description": "opencode-go/qwen3.7-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.8-flash",
+                "name": "Qwen3.8 Flash",
+                "description": "opencode-go/qwen3.8-flash"
+              },
+              {
+                "value": "opencode-go/qwen3.8-max",
+                "name": "Qwen3.8 Max",
+                "description": "opencode-go/qwen3.8-max"
+              },
+              {
+                "value": "opencode-go/space-bunny-free",
+                "name": "Space Bunny Free",
+                "description": "opencode-go/space-bunny-free"
+              },
+              {
+                "value": "opencode-go/claude-haiku-5-5",
+                "name": "Claude Haiku 5.5",
+                "description": "opencode-go/claude-haiku-5-5"
+              },
+              {
+                "value": "opencode-go/longcat-2.5-preview-free",
+                "name": "LongCat 2.5 Preview Free",
+                "description": "opencode-go/longcat-2.5-preview-free"
+              },
+              {
+                "value": "opencode-go/space-bunny",
+                "name": "Space Bunny",
+                "description": "opencode-go/space-bunny"
+              },
+              {
+                "value": "opencode-go/deepseek-flash",
+                "name": "deepseek-flash",
+                "description": "opencode-go/deepseek-flash"
+              },
+              {
+                "value": "opencode-go/omen-alpha",
+                "name": "omen-alpha",
+                "description": "opencode-go/omen-alpha"
+              },
+              {
+                "value": "opencode-zen/big-pickle",
+                "name": "Big Pickle",
+                "description": "opencode-zen/big-pickle"
+              },
+              {
+                "value": "opencode-zen/claude-3-5-haiku",
+                "name": "Claude Haiku 3.5",
+                "description": "opencode-zen/claude-3-5-haiku"
+              },
+              {
+                "value": "opencode-zen/claude-fable-5",
+                "name": "Claude Fable 5",
+                "description": "opencode-zen/claude-fable-5"
+              },
+              {
+                "value": "opencode-zen/claude-fable-5-1",
+                "name": "Claude Fable 5.1",
+                "description": "opencode-zen/claude-fable-5-1"
+              },
+              {
+                "value": "opencode-zen/claude-haiku-4-5",
+                "name": "Claude Haiku 4.5",
+                "description": "opencode-zen/claude-haiku-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-1",
+                "name": "Claude Opus 4.1",
+                "description": "opencode-zen/claude-opus-4-1"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-5",
+                "name": "Claude Opus 4.5",
+                "description": "opencode-zen/claude-opus-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-6",
+                "name": "Claude Opus 4.6",
+                "description": "opencode-zen/claude-opus-4-6"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-7",
+                "name": "Claude Opus 4.7",
+                "description": "opencode-zen/claude-opus-4-7"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-8",
+                "name": "Claude Opus 4.8",
+                "description": "opencode-zen/claude-opus-4-8"
+              },
+              {
+                "value": "opencode-zen/claude-opus-5",
+                "name": "Claude Opus 5",
+                "description": "opencode-zen/claude-opus-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-5-5",
+                "name": "Claude Opus 5.5",
+                "description": "opencode-zen/claude-opus-5-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4",
+                "name": "Claude Sonnet 4",
+                "description": "opencode-zen/claude-sonnet-4"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4-5",
+                "name": "Claude Sonnet 4.5",
+                "description": "opencode-zen/claude-sonnet-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4-6",
+                "name": "Claude Sonnet 4.6",
+                "description": "opencode-zen/claude-sonnet-4-6"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-5",
+                "name": "Claude Sonnet 5",
+                "description": "opencode-zen/claude-sonnet-5"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "opencode-zen/deepseek-v4-flash"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash-free",
+                "name": "DeepSeek V4 Flash Free",
+                "description": "opencode-zen/deepseek-v4-flash-free"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "opencode-zen/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-pro",
+                "name": "DeepSeek V4 Pro",
+                "description": "opencode-zen/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4.1-flash",
+                "name": "DeepSeek V4.1 Flash",
+                "description": "opencode-zen/deepseek-v4.1-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3-flash",
+                "name": "Gemini 3 Flash",
+                "description": "opencode-zen/gemini-3-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3-pro",
+                "name": "Gemini 3 Pro",
+                "description": "opencode-zen/gemini-3-pro"
+              },
+              {
+                "value": "opencode-zen/gemini-3.1-pro",
+                "name": "Gemini 3.1 Pro Preview",
+                "description": "opencode-zen/gemini-3.1-pro"
+              },
+              {
+                "value": "opencode-zen/gemini-3.5-flash",
+                "name": "Gemini 3.5 Flash",
+                "description": "opencode-zen/gemini-3.5-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.5-flash-lite",
+                "name": "Gemini 3.5 Flash Lite",
+                "description": "opencode-zen/gemini-3.5-flash-lite"
+              },
+              {
+                "value": "opencode-zen/gemini-3.6-flash",
+                "name": "Gemini 3.6 Flash",
+                "description": "opencode-zen/gemini-3.6-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.7-flash",
+                "name": "Gemini 3.7 Flash",
+                "description": "opencode-zen/gemini-3.7-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.8-flash",
+                "name": "Gemini 3.8 Flash",
+                "description": "opencode-zen/gemini-3.8-flash"
+              },
+              {
+                "value": "opencode-zen/glm-4.6",
+                "name": "GLM-4.6",
+                "description": "opencode-zen/glm-4.6"
+              },
+              {
+                "value": "opencode-zen/glm-4.7",
+                "name": "GLM-4.7",
+                "description": "opencode-zen/glm-4.7"
+              },
+              {
+                "value": "opencode-zen/glm-5",
+                "name": "GLM-5",
+                "description": "opencode-zen/glm-5"
+              },
+              {
+                "value": "opencode-zen/glm-5.1",
+                "name": "GLM-5.1",
+                "description": "opencode-zen/glm-5.1"
+              },
+              {
+                "value": "opencode-zen/glm-5.2",
+                "name": "GLM-5.2",
+                "description": "opencode-zen/glm-5.2"
+              },
+              {
+                "value": "opencode-zen/glm-5.3",
+                "name": "GLM-5.3",
+                "description": "opencode-zen/glm-5.3"
+              },
+              {
+                "value": "opencode-zen/glm-5.3-flash",
+                "name": "GLM-5.3-Flash",
+                "description": "opencode-zen/glm-5.3-flash"
+              },
+              {
+                "value": "opencode-zen/gpt-5",
+                "name": "GPT-5",
+                "description": "opencode-zen/gpt-5"
+              },
+              {
+                "value": "opencode-zen/gpt-5-codex",
+                "name": "GPT-5 Codex",
+                "description": "opencode-zen/gpt-5-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5-nano",
+                "name": "GPT-5 Nano",
+                "description": "opencode-zen/gpt-5-nano"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1",
+                "name": "GPT-5.1",
+                "description": "opencode-zen/gpt-5.1"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex",
+                "name": "GPT-5.1 Codex",
+                "description": "opencode-zen/gpt-5.1-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex-max",
+                "name": "GPT-5.1 Codex Max",
+                "description": "opencode-zen/gpt-5.1-codex-max"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex-mini",
+                "name": "GPT-5.1 Codex Mini",
+                "description": "opencode-zen/gpt-5.1-codex-mini"
+              },
+              {
+                "value": "opencode-zen/gpt-5.2",
+                "name": "GPT-5.2",
+                "description": "opencode-zen/gpt-5.2"
+              },
+              {
+                "value": "opencode-zen/gpt-5.2-codex",
+                "name": "GPT-5.2 Codex",
+                "description": "opencode-zen/gpt-5.2-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.3-codex",
+                "name": "GPT-5.3 Codex",
+                "description": "opencode-zen/gpt-5.3-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.3-codex-spark",
+                "name": "GPT-5.3 Codex Spark",
+                "description": "opencode-zen/gpt-5.3-codex-spark"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4",
+                "name": "GPT-5.4",
+                "description": "opencode-zen/gpt-5.4"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-mini",
+                "name": "GPT-5.4 Mini",
+                "description": "opencode-zen/gpt-5.4-mini"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-nano",
+                "name": "GPT-5.4 Nano",
+                "description": "opencode-zen/gpt-5.4-nano"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-pro",
+                "name": "GPT-5.4 Pro",
+                "description": "opencode-zen/gpt-5.4-pro"
+              },
+              {
+                "value": "opencode-zen/gpt-5.5",
+                "name": "GPT-5.5",
+                "description": "opencode-zen/gpt-5.5"
+              },
+              {
+                "value": "opencode-zen/gpt-5.5-pro",
+                "name": "GPT-5.5 Pro",
+                "description": "opencode-zen/gpt-5.5-pro"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-luna",
+                "name": "GPT-5.6 Luna",
+                "description": "opencode-zen/gpt-5.6-luna"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-sol",
+                "name": "GPT-5.6 Sol",
+                "description": "opencode-zen/gpt-5.6-sol"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-terra",
+                "name": "GPT-5.6 Terra",
+                "description": "opencode-zen/gpt-5.6-terra"
+              },
+              {
+                "value": "opencode-zen/gpt-6-astra",
+                "name": "GPT-6 Astra",
+                "description": "opencode-zen/gpt-6-astra"
+              },
+              {
+                "value": "opencode-zen/gpt-6-luna",
+                "name": "GPT-6 Luna",
+                "description": "opencode-zen/gpt-6-luna"
+              },
+              {
+                "value": "opencode-zen/gpt-6-sol",
+                "name": "GPT-6 Sol",
+                "description": "opencode-zen/gpt-6-sol"
+              },
+              {
+                "value": "opencode-zen/grok-4.5",
+                "name": "Grok 4.5",
+                "description": "opencode-zen/grok-4.5"
+              },
+              {
+                "value": "opencode-zen/grok-4.6",
+                "name": "Grok 4.6",
+                "description": "opencode-zen/grok-4.6"
+              },
+              {
+                "value": "opencode-zen/grok-4.7",
+                "name": "Grok 4.7 (30% Off)",
+                "description": "opencode-zen/grok-4.7"
+              },
+              {
+                "value": "opencode-zen/grok-build-0.1",
+                "name": "Grok Build 0.1",
+                "description": "opencode-zen/grok-build-0.1"
+              },
+              {
+                "value": "opencode-zen/hy3-free",
+                "name": "Hy3 Free",
+                "description": "opencode-zen/hy3-free"
+              },
+              {
+                "value": "opencode-zen/hy3-preview-free",
+                "name": "Hy3 preview Free",
+                "description": "opencode-zen/hy3-preview-free"
+              },
+              {
+                "value": "opencode-zen/kimi-k2",
+                "name": "Kimi K2",
+                "description": "opencode-zen/kimi-k2"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.5",
+                "name": "Kimi K2.5",
+                "description": "opencode-zen/kimi-k2.5"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.6",
+                "name": "Kimi K2.6",
+                "description": "opencode-zen/kimi-k2.6"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.7-code",
+                "name": "Kimi K2.7 Code",
+                "description": "opencode-zen/kimi-k2.7-code"
+              },
+              {
+                "value": "opencode-zen/kimi-k3",
+                "name": "Kimi K3",
+                "description": "opencode-zen/kimi-k3"
+              },
+              {
+                "value": "opencode-zen/laguna-s-2.1-free",
+                "name": "Laguna S 2.1 Free",
+                "description": "opencode-zen/laguna-s-2.1-free"
+              },
+              {
+                "value": "opencode-zen/ling-2.6-flash-free",
+                "name": "Ling 2.6 Flash Free",
+                "description": "opencode-zen/ling-2.6-flash-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-flash-fin-free",
+                "name": "Ling 3.0 Flash Fin Free",
+                "description": "opencode-zen/ling-3.0-flash-fin-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-flash-free",
+                "name": "Ling-3.0-flash Free",
+                "description": "opencode-zen/ling-3.0-flash-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-tiny-free",
+                "name": "Ling-3.0-tiny Free",
+                "description": "opencode-zen/ling-3.0-tiny-free"
+              },
+              {
+                "value": "opencode-zen/longcat-2.0-free",
+                "name": "LongCat-2.0 Free",
+                "description": "opencode-zen/longcat-2.0-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-flash-free",
+                "name": "MiMo V2 Flash Free",
+                "description": "opencode-zen/mimo-v2-flash-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-omni-free",
+                "name": "MiMo V2 Omni Free",
+                "description": "opencode-zen/mimo-v2-omni-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-pro-free",
+                "name": "MiMo V2 Pro Free",
+                "description": "opencode-zen/mimo-v2-pro-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2.5-free",
+                "name": "MiMo V2.5 Free",
+                "description": "opencode-zen/mimo-v2.5-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2.6-flash-free",
+                "name": "MiMo-V2.6-Flash Free",
+                "description": "opencode-zen/mimo-v2.6-flash-free"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.1",
+                "name": "minimax-m2.1",
+                "description": "opencode-zen/minimax-m2.1"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.5",
+                "name": "MiniMax-M2.5",
+                "description": "opencode-zen/minimax-m2.5"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.5-free",
+                "name": "MiniMax M2.5 Free",
+                "description": "opencode-zen/minimax-m2.5-free"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.7",
+                "name": "MiniMax-M2.7",
+                "description": "opencode-zen/minimax-m2.7"
+              },
+              {
+                "value": "opencode-zen/minimax-m3",
+                "name": "MiniMax-M3",
+                "description": "opencode-zen/minimax-m3"
+              },
+              {
+                "value": "opencode-zen/minimax-m3-free",
+                "name": "MiniMax M3 Free",
+                "description": "opencode-zen/minimax-m3-free"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.2",
+                "name": "Muse Spark 1.2",
+                "description": "opencode-zen/muse-spark-1.2"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.2-contributor-free",
+                "name": "Muse Spark 1.2 Free",
+                "description": "opencode-zen/muse-spark-1.2-contributor-free"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.3",
+                "name": "Muse Spark 1.3",
+                "description": "opencode-zen/muse-spark-1.3"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.3-contributor-free",
+                "name": "Muse Spark 1.3 Free",
+                "description": "opencode-zen/muse-spark-1.3-contributor-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3-super-free",
+                "name": "Nemotron 3 Super Free",
+                "description": "opencode-zen/nemotron-3-super-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3-ultra-free",
+                "name": "Nemotron 3 Ultra Free",
+                "description": "opencode-zen/nemotron-3-ultra-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3.5-lightning-free",
+                "name": "Nemotron 3.5 Lightning Free",
+                "description": "opencode-zen/nemotron-3.5-lightning-free"
+              },
+              {
+                "value": "opencode-zen/north-mini-code-free",
+                "name": "North Mini Code Free",
+                "description": "opencode-zen/north-mini-code-free"
+              },
+              {
+                "value": "opencode-zen/qwen3.5-plus",
+                "name": "Qwen3.5 Plus",
+                "description": "opencode-zen/qwen3.5-plus"
+              },
+              {
+                "value": "opencode-zen/qwen3.6-plus",
+                "name": "Qwen3.6 Plus",
+                "description": "opencode-zen/qwen3.6-plus"
+              },
+              {
+                "value": "opencode-zen/qwen3.6-plus-free",
+                "name": "Qwen3.6 Plus Free",
+                "description": "opencode-zen/qwen3.6-plus-free"
+              },
+              {
+                "value": "opencode-zen/qwen3.8-flash",
+                "name": "Qwen3.8 Flash",
+                "description": "opencode-zen/qwen3.8-flash"
+              },
+              {
+                "value": "opencode-zen/ring-2.6-1t-free",
+                "name": "Ring 2.6 1T Free",
+                "description": "opencode-zen/ring-2.6-1t-free"
+              },
+              {
+                "value": "opencode-zen/space-bunny-free",
+                "name": "Space Bunny Free",
+                "description": "opencode-zen/space-bunny-free"
+              },
+              {
+                "value": "opencode-zen/trinity-large-preview-free",
+                "name": "Trinity Large Preview",
+                "description": "opencode-zen/trinity-large-preview-free"
+              },
+              {
+                "value": "opencode-zen/x-preview-f-free",
+                "name": "Ox Alpha Free (Unlimited)",
+                "description": "opencode-zen/x-preview-f-free"
+              },
+              {
+                "value": "opencode-zen/claude-haiku-5-5",
+                "name": "claude-haiku-5-5",
+                "description": "opencode-zen/claude-haiku-5-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-5-5",
+                "name": "claude-sonnet-5-5",
+                "description": "opencode-zen/claude-sonnet-5-5"
+              },
+              {
+                "value": "opencode-zen/fledge-alpha-free",
+                "name": "fledge-alpha-free",
+                "description": "opencode-zen/fledge-alpha-free"
+              },
+              {
+                "value": "opencode-zen/gpt-6.1-sol",
+                "name": "gpt-6.1-sol",
+                "description": "opencode-zen/gpt-6.1-sol"
+              },
+              {
+                "value": "opencode-zen/jev-1.13",
+                "name": "jev-1.13",
+                "description": "opencode-zen/jev-1.13"
+              },
+              {
+                "value": "opencode-zen/jev-1.13-free",
+                "name": "jev-1.13-free",
+                "description": "opencode-zen/jev-1.13-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.1-flash-free",
+                "name": "ling-3.1-flash-free",
+                "description": "opencode-zen/ling-3.1-flash-free"
+              },
+              {
+                "value": "opencode-zen/longcat-2.5-preview-free",
+                "name": "longcat-2.5-preview-free",
+                "description": "opencode-zen/longcat-2.5-preview-free"
+              },
+              {
+                "value": "opencode-zen/mistral-large-4",
+                "name": "mistral-large-4",
+                "description": "opencode-zen/mistral-large-4"
+              },
+              {
+                "value": "opencode-zen/test",
+                "name": "test",
+                "description": "opencode-zen/test"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3-flash",
+                "name": "GLM-5.3-Flash (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3-flash"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3",
+                "name": "GLM-5.3 (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3-flashx",
+                "name": "GLM-5.3-FlashX (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3-flashx"
+              }
+            ]
+          },
+          {
+            "id": "thinking",
+            "name": "Thinking",
+            "category": "thought_level",
+            "type": "select",
+            "currentValue": "high",
+            "options": [
+              {
+                "value": "off",
+                "name": "Off"
+              },
+              {
+                "value": "auto",
+                "name": "Auto",
+                "description": "Auto-detect per prompt"
+              },
+              {
+                "value": "low",
+                "name": "low"
+              },
+              {
+                "value": "high",
+                "name": "high"
+              },
+              {
+                "value": "max",
+                "name": "max"
+              }
+            ]
+          }
+        ],
+        "modes": {
+          "availableModes": [
+            {
+              "id": "default",
+              "name": "Default",
+              "description": "Standard ACP headless mode"
+            },
+            {
+              "id": "plan",
+              "name": "Plan",
+              "description": "Read-only planning mode that drafts a plan to a markdown file before any code changes"
+            }
+          ],
+          "currentModeId": "default"
+        }
+      }
+    }
+  ],
+  "setConfig": [
+    {
+      "configId": "model",
+      "value": "deepseek/deepseek-v4-pro",
+      "ok": true,
+      "raw": {
+        "configOptions": [
+          {
+            "id": "mode",
+            "name": "Mode",
+            "category": "mode",
+            "type": "select",
+            "currentValue": "default",
+            "options": [
+              {
+                "value": "default",
+                "name": "Default",
+                "description": "Standard ACP headless mode"
+              },
+              {
+                "value": "plan",
+                "name": "Plan",
+                "description": "Read-only planning mode that drafts a plan to a markdown file before any code changes"
+              }
+            ]
+          },
+          {
+            "id": "model",
+            "name": "Model",
+            "category": "model",
+            "type": "select",
+            "currentValue": "deepseek/deepseek-v4-pro",
+            "options": [
+              {
+                "value": "deepseek/deepseek-flash",
+                "name": "DeepSeek-V4.1-Flash",
+                "description": "deepseek/deepseek-flash"
+              },
+              {
+                "value": "deepseek/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "deepseek/deepseek-v4-flash"
+              },
+              {
+                "value": "deepseek/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "deepseek/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "deepseek/deepseek-v4-pro",
+                "name": "DeepSeek-V4-Pro",
+                "description": "deepseek/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "opencode-go/deepseek-v4-flash"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "opencode-go/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "opencode-go/deepseek-v4-pro",
+                "name": "DeepSeek V4 Pro (New)",
+                "description": "opencode-go/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-go/deepseek-v4.1-flash",
+                "name": "DeepSeek V4.1 Flash",
+                "description": "opencode-go/deepseek-v4.1-flash"
+              },
+              {
+                "value": "opencode-go/glm-5",
+                "name": "GLM-5",
+                "description": "opencode-go/glm-5"
+              },
+              {
+                "value": "opencode-go/glm-5.1",
+                "name": "GLM-5.1",
+                "description": "opencode-go/glm-5.1"
+              },
+              {
+                "value": "opencode-go/glm-5.2",
+                "name": "GLM-5.2",
+                "description": "opencode-go/glm-5.2"
+              },
+              {
+                "value": "opencode-go/glm-5.3",
+                "name": "GLM-5.3",
+                "description": "opencode-go/glm-5.3"
+              },
+              {
+                "value": "opencode-go/glm-5.3-flash",
+                "name": "GLM-5.3-Flash",
+                "description": "opencode-go/glm-5.3-flash"
+              },
+              {
+                "value": "opencode-go/gpt-5.6-luna",
+                "name": "GPT-5.6 Luna",
+                "description": "opencode-go/gpt-5.6-luna"
+              },
+              {
+                "value": "opencode-go/gpt-6-luna",
+                "name": "GPT-6 Luna",
+                "description": "opencode-go/gpt-6-luna"
+              },
+              {
+                "value": "opencode-go/grok-4.5",
+                "name": "Grok 4.5",
+                "description": "opencode-go/grok-4.5"
+              },
+              {
+                "value": "opencode-go/grok-4.6",
+                "name": "Grok 4.6",
+                "description": "opencode-go/grok-4.6"
+              },
+              {
+                "value": "opencode-go/grok-4.7",
+                "name": "Grok 4.7",
+                "description": "opencode-go/grok-4.7"
+              },
+              {
+                "value": "opencode-go/hy3",
+                "name": "Hy3",
+                "description": "opencode-go/hy3"
+              },
+              {
+                "value": "opencode-go/hy4-preview",
+                "name": "Hy4 preview",
+                "description": "opencode-go/hy4-preview"
+              },
+              {
+                "value": "opencode-go/kimi-k2.5",
+                "name": "kimi-k2.5",
+                "description": "opencode-go/kimi-k2.5"
+              },
+              {
+                "value": "opencode-go/kimi-k2.6",
+                "name": "Kimi K2.6",
+                "description": "opencode-go/kimi-k2.6"
+              },
+              {
+                "value": "opencode-go/kimi-k2.7-code",
+                "name": "Kimi K2.7 Code",
+                "description": "opencode-go/kimi-k2.7-code"
+              },
+              {
+                "value": "opencode-go/kimi-k3",
+                "name": "Kimi K3",
+                "description": "opencode-go/kimi-k3"
+              },
+              {
+                "value": "opencode-go/longcat-2.0",
+                "name": "LongCat-2.0",
+                "description": "opencode-go/longcat-2.0"
+              },
+              {
+                "value": "opencode-go/mimo-v2-omni",
+                "name": "MiMo-V2-Omni",
+                "description": "opencode-go/mimo-v2-omni"
+              },
+              {
+                "value": "opencode-go/mimo-v2-pro",
+                "name": "MiMo-V2-Pro",
+                "description": "opencode-go/mimo-v2-pro"
+              },
+              {
+                "value": "opencode-go/mimo-v2.5",
+                "name": "MiMo V2.5",
+                "description": "opencode-go/mimo-v2.5"
+              },
+              {
+                "value": "opencode-go/mimo-v2.5-pro",
+                "name": "MiMo V2.5 Pro",
+                "description": "opencode-go/mimo-v2.5-pro"
+              },
+              {
+                "value": "opencode-go/mimo-v2.6-flash",
+                "name": "MiMo-V2.6-Flash",
+                "description": "opencode-go/mimo-v2.6-flash"
+              },
+              {
+                "value": "opencode-go/mimo-v2.6-pro",
+                "name": "MiMo-V2.6-Pro",
+                "description": "opencode-go/mimo-v2.6-pro"
+              },
+              {
+                "value": "opencode-go/minimax-m2.5",
+                "name": "MiniMax-M2.5",
+                "description": "opencode-go/minimax-m2.5"
+              },
+              {
+                "value": "opencode-go/minimax-m2.7",
+                "name": "MiniMax-M2.7",
+                "description": "opencode-go/minimax-m2.7"
+              },
+              {
+                "value": "opencode-go/minimax-m3",
+                "name": "MiniMax-M3",
+                "description": "opencode-go/minimax-m3"
+              },
+              {
+                "value": "opencode-go/muse-spark-1.2-contributor",
+                "name": "Muse Spark 1.2 Contributor",
+                "description": "opencode-go/muse-spark-1.2-contributor"
+              },
+              {
+                "value": "opencode-go/muse-spark-1.3-contributor",
+                "name": "Muse Spark 1.3 Contributor",
+                "description": "opencode-go/muse-spark-1.3-contributor"
+              },
+              {
+                "value": "opencode-go/ox-alpha-free",
+                "name": "Ox Alpha Free (Unlimited)",
+                "description": "opencode-go/ox-alpha-free"
+              },
+              {
+                "value": "opencode-go/qwen3.5-plus",
+                "name": "Qwen3.5 Plus",
+                "description": "opencode-go/qwen3.5-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.6-plus",
+                "name": "Qwen3.6 Plus",
+                "description": "opencode-go/qwen3.6-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.7-max",
+                "name": "Qwen3.7 Max",
+                "description": "opencode-go/qwen3.7-max"
+              },
+              {
+                "value": "opencode-go/qwen3.7-plus",
+                "name": "Qwen3.7 Plus",
+                "description": "opencode-go/qwen3.7-plus"
+              },
+              {
+                "value": "opencode-go/qwen3.8-flash",
+                "name": "Qwen3.8 Flash",
+                "description": "opencode-go/qwen3.8-flash"
+              },
+              {
+                "value": "opencode-go/qwen3.8-max",
+                "name": "Qwen3.8 Max",
+                "description": "opencode-go/qwen3.8-max"
+              },
+              {
+                "value": "opencode-go/space-bunny-free",
+                "name": "Space Bunny Free",
+                "description": "opencode-go/space-bunny-free"
+              },
+              {
+                "value": "opencode-go/claude-haiku-5-5",
+                "name": "Claude Haiku 5.5",
+                "description": "opencode-go/claude-haiku-5-5"
+              },
+              {
+                "value": "opencode-go/longcat-2.5-preview-free",
+                "name": "LongCat 2.5 Preview Free",
+                "description": "opencode-go/longcat-2.5-preview-free"
+              },
+              {
+                "value": "opencode-go/space-bunny",
+                "name": "Space Bunny",
+                "description": "opencode-go/space-bunny"
+              },
+              {
+                "value": "opencode-go/deepseek-flash",
+                "name": "deepseek-flash",
+                "description": "opencode-go/deepseek-flash"
+              },
+              {
+                "value": "opencode-go/omen-alpha",
+                "name": "omen-alpha",
+                "description": "opencode-go/omen-alpha"
+              },
+              {
+                "value": "opencode-zen/big-pickle",
+                "name": "Big Pickle",
+                "description": "opencode-zen/big-pickle"
+              },
+              {
+                "value": "opencode-zen/claude-3-5-haiku",
+                "name": "Claude Haiku 3.5",
+                "description": "opencode-zen/claude-3-5-haiku"
+              },
+              {
+                "value": "opencode-zen/claude-fable-5",
+                "name": "Claude Fable 5",
+                "description": "opencode-zen/claude-fable-5"
+              },
+              {
+                "value": "opencode-zen/claude-fable-5-1",
+                "name": "Claude Fable 5.1",
+                "description": "opencode-zen/claude-fable-5-1"
+              },
+              {
+                "value": "opencode-zen/claude-haiku-4-5",
+                "name": "Claude Haiku 4.5",
+                "description": "opencode-zen/claude-haiku-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-1",
+                "name": "Claude Opus 4.1",
+                "description": "opencode-zen/claude-opus-4-1"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-5",
+                "name": "Claude Opus 4.5",
+                "description": "opencode-zen/claude-opus-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-6",
+                "name": "Claude Opus 4.6",
+                "description": "opencode-zen/claude-opus-4-6"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-7",
+                "name": "Claude Opus 4.7",
+                "description": "opencode-zen/claude-opus-4-7"
+              },
+              {
+                "value": "opencode-zen/claude-opus-4-8",
+                "name": "Claude Opus 4.8",
+                "description": "opencode-zen/claude-opus-4-8"
+              },
+              {
+                "value": "opencode-zen/claude-opus-5",
+                "name": "Claude Opus 5",
+                "description": "opencode-zen/claude-opus-5"
+              },
+              {
+                "value": "opencode-zen/claude-opus-5-5",
+                "name": "Claude Opus 5.5",
+                "description": "opencode-zen/claude-opus-5-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4",
+                "name": "Claude Sonnet 4",
+                "description": "opencode-zen/claude-sonnet-4"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4-5",
+                "name": "Claude Sonnet 4.5",
+                "description": "opencode-zen/claude-sonnet-4-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-4-6",
+                "name": "Claude Sonnet 4.6",
+                "description": "opencode-zen/claude-sonnet-4-6"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-5",
+                "name": "Claude Sonnet 5",
+                "description": "opencode-zen/claude-sonnet-5"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash",
+                "name": "DeepSeek V4 Flash",
+                "description": "opencode-zen/deepseek-v4-flash"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash-free",
+                "name": "DeepSeek V4 Flash Free",
+                "description": "opencode-zen/deepseek-v4-flash-free"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-flash-vision-exp",
+                "name": "DeepSeek V4 Flash Vision Exp",
+                "description": "opencode-zen/deepseek-v4-flash-vision-exp"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4-pro",
+                "name": "DeepSeek V4 Pro",
+                "description": "opencode-zen/deepseek-v4-pro"
+              },
+              {
+                "value": "opencode-zen/deepseek-v4.1-flash",
+                "name": "DeepSeek V4.1 Flash",
+                "description": "opencode-zen/deepseek-v4.1-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3-flash",
+                "name": "Gemini 3 Flash",
+                "description": "opencode-zen/gemini-3-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3-pro",
+                "name": "Gemini 3 Pro",
+                "description": "opencode-zen/gemini-3-pro"
+              },
+              {
+                "value": "opencode-zen/gemini-3.1-pro",
+                "name": "Gemini 3.1 Pro Preview",
+                "description": "opencode-zen/gemini-3.1-pro"
+              },
+              {
+                "value": "opencode-zen/gemini-3.5-flash",
+                "name": "Gemini 3.5 Flash",
+                "description": "opencode-zen/gemini-3.5-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.5-flash-lite",
+                "name": "Gemini 3.5 Flash Lite",
+                "description": "opencode-zen/gemini-3.5-flash-lite"
+              },
+              {
+                "value": "opencode-zen/gemini-3.6-flash",
+                "name": "Gemini 3.6 Flash",
+                "description": "opencode-zen/gemini-3.6-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.7-flash",
+                "name": "Gemini 3.7 Flash",
+                "description": "opencode-zen/gemini-3.7-flash"
+              },
+              {
+                "value": "opencode-zen/gemini-3.8-flash",
+                "name": "Gemini 3.8 Flash",
+                "description": "opencode-zen/gemini-3.8-flash"
+              },
+              {
+                "value": "opencode-zen/glm-4.6",
+                "name": "GLM-4.6",
+                "description": "opencode-zen/glm-4.6"
+              },
+              {
+                "value": "opencode-zen/glm-4.7",
+                "name": "GLM-4.7",
+                "description": "opencode-zen/glm-4.7"
+              },
+              {
+                "value": "opencode-zen/glm-5",
+                "name": "GLM-5",
+                "description": "opencode-zen/glm-5"
+              },
+              {
+                "value": "opencode-zen/glm-5.1",
+                "name": "GLM-5.1",
+                "description": "opencode-zen/glm-5.1"
+              },
+              {
+                "value": "opencode-zen/glm-5.2",
+                "name": "GLM-5.2",
+                "description": "opencode-zen/glm-5.2"
+              },
+              {
+                "value": "opencode-zen/glm-5.3",
+                "name": "GLM-5.3",
+                "description": "opencode-zen/glm-5.3"
+              },
+              {
+                "value": "opencode-zen/glm-5.3-flash",
+                "name": "GLM-5.3-Flash",
+                "description": "opencode-zen/glm-5.3-flash"
+              },
+              {
+                "value": "opencode-zen/gpt-5",
+                "name": "GPT-5",
+                "description": "opencode-zen/gpt-5"
+              },
+              {
+                "value": "opencode-zen/gpt-5-codex",
+                "name": "GPT-5 Codex",
+                "description": "opencode-zen/gpt-5-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5-nano",
+                "name": "GPT-5 Nano",
+                "description": "opencode-zen/gpt-5-nano"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1",
+                "name": "GPT-5.1",
+                "description": "opencode-zen/gpt-5.1"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex",
+                "name": "GPT-5.1 Codex",
+                "description": "opencode-zen/gpt-5.1-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex-max",
+                "name": "GPT-5.1 Codex Max",
+                "description": "opencode-zen/gpt-5.1-codex-max"
+              },
+              {
+                "value": "opencode-zen/gpt-5.1-codex-mini",
+                "name": "GPT-5.1 Codex Mini",
+                "description": "opencode-zen/gpt-5.1-codex-mini"
+              },
+              {
+                "value": "opencode-zen/gpt-5.2",
+                "name": "GPT-5.2",
+                "description": "opencode-zen/gpt-5.2"
+              },
+              {
+                "value": "opencode-zen/gpt-5.2-codex",
+                "name": "GPT-5.2 Codex",
+                "description": "opencode-zen/gpt-5.2-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.3-codex",
+                "name": "GPT-5.3 Codex",
+                "description": "opencode-zen/gpt-5.3-codex"
+              },
+              {
+                "value": "opencode-zen/gpt-5.3-codex-spark",
+                "name": "GPT-5.3 Codex Spark",
+                "description": "opencode-zen/gpt-5.3-codex-spark"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4",
+                "name": "GPT-5.4",
+                "description": "opencode-zen/gpt-5.4"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-mini",
+                "name": "GPT-5.4 Mini",
+                "description": "opencode-zen/gpt-5.4-mini"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-nano",
+                "name": "GPT-5.4 Nano",
+                "description": "opencode-zen/gpt-5.4-nano"
+              },
+              {
+                "value": "opencode-zen/gpt-5.4-pro",
+                "name": "GPT-5.4 Pro",
+                "description": "opencode-zen/gpt-5.4-pro"
+              },
+              {
+                "value": "opencode-zen/gpt-5.5",
+                "name": "GPT-5.5",
+                "description": "opencode-zen/gpt-5.5"
+              },
+              {
+                "value": "opencode-zen/gpt-5.5-pro",
+                "name": "GPT-5.5 Pro",
+                "description": "opencode-zen/gpt-5.5-pro"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-luna",
+                "name": "GPT-5.6 Luna",
+                "description": "opencode-zen/gpt-5.6-luna"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-sol",
+                "name": "GPT-5.6 Sol",
+                "description": "opencode-zen/gpt-5.6-sol"
+              },
+              {
+                "value": "opencode-zen/gpt-5.6-terra",
+                "name": "GPT-5.6 Terra",
+                "description": "opencode-zen/gpt-5.6-terra"
+              },
+              {
+                "value": "opencode-zen/gpt-6-astra",
+                "name": "GPT-6 Astra",
+                "description": "opencode-zen/gpt-6-astra"
+              },
+              {
+                "value": "opencode-zen/gpt-6-luna",
+                "name": "GPT-6 Luna",
+                "description": "opencode-zen/gpt-6-luna"
+              },
+              {
+                "value": "opencode-zen/gpt-6-sol",
+                "name": "GPT-6 Sol",
+                "description": "opencode-zen/gpt-6-sol"
+              },
+              {
+                "value": "opencode-zen/grok-4.5",
+                "name": "Grok 4.5",
+                "description": "opencode-zen/grok-4.5"
+              },
+              {
+                "value": "opencode-zen/grok-4.6",
+                "name": "Grok 4.6",
+                "description": "opencode-zen/grok-4.6"
+              },
+              {
+                "value": "opencode-zen/grok-4.7",
+                "name": "Grok 4.7 (30% Off)",
+                "description": "opencode-zen/grok-4.7"
+              },
+              {
+                "value": "opencode-zen/grok-build-0.1",
+                "name": "Grok Build 0.1",
+                "description": "opencode-zen/grok-build-0.1"
+              },
+              {
+                "value": "opencode-zen/hy3-free",
+                "name": "Hy3 Free",
+                "description": "opencode-zen/hy3-free"
+              },
+              {
+                "value": "opencode-zen/hy3-preview-free",
+                "name": "Hy3 preview Free",
+                "description": "opencode-zen/hy3-preview-free"
+              },
+              {
+                "value": "opencode-zen/kimi-k2",
+                "name": "Kimi K2",
+                "description": "opencode-zen/kimi-k2"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.5",
+                "name": "Kimi K2.5",
+                "description": "opencode-zen/kimi-k2.5"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.6",
+                "name": "Kimi K2.6",
+                "description": "opencode-zen/kimi-k2.6"
+              },
+              {
+                "value": "opencode-zen/kimi-k2.7-code",
+                "name": "Kimi K2.7 Code",
+                "description": "opencode-zen/kimi-k2.7-code"
+              },
+              {
+                "value": "opencode-zen/kimi-k3",
+                "name": "Kimi K3",
+                "description": "opencode-zen/kimi-k3"
+              },
+              {
+                "value": "opencode-zen/laguna-s-2.1-free",
+                "name": "Laguna S 2.1 Free",
+                "description": "opencode-zen/laguna-s-2.1-free"
+              },
+              {
+                "value": "opencode-zen/ling-2.6-flash-free",
+                "name": "Ling 2.6 Flash Free",
+                "description": "opencode-zen/ling-2.6-flash-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-flash-fin-free",
+                "name": "Ling 3.0 Flash Fin Free",
+                "description": "opencode-zen/ling-3.0-flash-fin-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-flash-free",
+                "name": "Ling-3.0-flash Free",
+                "description": "opencode-zen/ling-3.0-flash-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.0-tiny-free",
+                "name": "Ling-3.0-tiny Free",
+                "description": "opencode-zen/ling-3.0-tiny-free"
+              },
+              {
+                "value": "opencode-zen/longcat-2.0-free",
+                "name": "LongCat-2.0 Free",
+                "description": "opencode-zen/longcat-2.0-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-flash-free",
+                "name": "MiMo V2 Flash Free",
+                "description": "opencode-zen/mimo-v2-flash-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-omni-free",
+                "name": "MiMo V2 Omni Free",
+                "description": "opencode-zen/mimo-v2-omni-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2-pro-free",
+                "name": "MiMo V2 Pro Free",
+                "description": "opencode-zen/mimo-v2-pro-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2.5-free",
+                "name": "MiMo V2.5 Free",
+                "description": "opencode-zen/mimo-v2.5-free"
+              },
+              {
+                "value": "opencode-zen/mimo-v2.6-flash-free",
+                "name": "MiMo-V2.6-Flash Free",
+                "description": "opencode-zen/mimo-v2.6-flash-free"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.1",
+                "name": "minimax-m2.1",
+                "description": "opencode-zen/minimax-m2.1"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.5",
+                "name": "MiniMax-M2.5",
+                "description": "opencode-zen/minimax-m2.5"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.5-free",
+                "name": "MiniMax M2.5 Free",
+                "description": "opencode-zen/minimax-m2.5-free"
+              },
+              {
+                "value": "opencode-zen/minimax-m2.7",
+                "name": "MiniMax-M2.7",
+                "description": "opencode-zen/minimax-m2.7"
+              },
+              {
+                "value": "opencode-zen/minimax-m3",
+                "name": "MiniMax-M3",
+                "description": "opencode-zen/minimax-m3"
+              },
+              {
+                "value": "opencode-zen/minimax-m3-free",
+                "name": "MiniMax M3 Free",
+                "description": "opencode-zen/minimax-m3-free"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.2",
+                "name": "Muse Spark 1.2",
+                "description": "opencode-zen/muse-spark-1.2"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.2-contributor-free",
+                "name": "Muse Spark 1.2 Free",
+                "description": "opencode-zen/muse-spark-1.2-contributor-free"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.3",
+                "name": "Muse Spark 1.3",
+                "description": "opencode-zen/muse-spark-1.3"
+              },
+              {
+                "value": "opencode-zen/muse-spark-1.3-contributor-free",
+                "name": "Muse Spark 1.3 Free",
+                "description": "opencode-zen/muse-spark-1.3-contributor-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3-super-free",
+                "name": "Nemotron 3 Super Free",
+                "description": "opencode-zen/nemotron-3-super-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3-ultra-free",
+                "name": "Nemotron 3 Ultra Free",
+                "description": "opencode-zen/nemotron-3-ultra-free"
+              },
+              {
+                "value": "opencode-zen/nemotron-3.5-lightning-free",
+                "name": "Nemotron 3.5 Lightning Free",
+                "description": "opencode-zen/nemotron-3.5-lightning-free"
+              },
+              {
+                "value": "opencode-zen/north-mini-code-free",
+                "name": "North Mini Code Free",
+                "description": "opencode-zen/north-mini-code-free"
+              },
+              {
+                "value": "opencode-zen/qwen3.5-plus",
+                "name": "Qwen3.5 Plus",
+                "description": "opencode-zen/qwen3.5-plus"
+              },
+              {
+                "value": "opencode-zen/qwen3.6-plus",
+                "name": "Qwen3.6 Plus",
+                "description": "opencode-zen/qwen3.6-plus"
+              },
+              {
+                "value": "opencode-zen/qwen3.6-plus-free",
+                "name": "Qwen3.6 Plus Free",
+                "description": "opencode-zen/qwen3.6-plus-free"
+              },
+              {
+                "value": "opencode-zen/qwen3.8-flash",
+                "name": "Qwen3.8 Flash",
+                "description": "opencode-zen/qwen3.8-flash"
+              },
+              {
+                "value": "opencode-zen/ring-2.6-1t-free",
+                "name": "Ring 2.6 1T Free",
+                "description": "opencode-zen/ring-2.6-1t-free"
+              },
+              {
+                "value": "opencode-zen/space-bunny-free",
+                "name": "Space Bunny Free",
+                "description": "opencode-zen/space-bunny-free"
+              },
+              {
+                "value": "opencode-zen/trinity-large-preview-free",
+                "name": "Trinity Large Preview",
+                "description": "opencode-zen/trinity-large-preview-free"
+              },
+              {
+                "value": "opencode-zen/x-preview-f-free",
+                "name": "Ox Alpha Free (Unlimited)",
+                "description": "opencode-zen/x-preview-f-free"
+              },
+              {
+                "value": "opencode-zen/claude-haiku-5-5",
+                "name": "claude-haiku-5-5",
+                "description": "opencode-zen/claude-haiku-5-5"
+              },
+              {
+                "value": "opencode-zen/claude-sonnet-5-5",
+                "name": "claude-sonnet-5-5",
+                "description": "opencode-zen/claude-sonnet-5-5"
+              },
+              {
+                "value": "opencode-zen/fledge-alpha-free",
+                "name": "fledge-alpha-free",
+                "description": "opencode-zen/fledge-alpha-free"
+              },
+              {
+                "value": "opencode-zen/gpt-6.1-sol",
+                "name": "gpt-6.1-sol",
+                "description": "opencode-zen/gpt-6.1-sol"
+              },
+              {
+                "value": "opencode-zen/jev-1.13",
+                "name": "jev-1.13",
+                "description": "opencode-zen/jev-1.13"
+              },
+              {
+                "value": "opencode-zen/jev-1.13-free",
+                "name": "jev-1.13-free",
+                "description": "opencode-zen/jev-1.13-free"
+              },
+              {
+                "value": "opencode-zen/ling-3.1-flash-free",
+                "name": "ling-3.1-flash-free",
+                "description": "opencode-zen/ling-3.1-flash-free"
+              },
+              {
+                "value": "opencode-zen/longcat-2.5-preview-free",
+                "name": "longcat-2.5-preview-free",
+                "description": "opencode-zen/longcat-2.5-preview-free"
+              },
+              {
+                "value": "opencode-zen/mistral-large-4",
+                "name": "mistral-large-4",
+                "description": "opencode-zen/mistral-large-4"
+              },
+              {
+                "value": "opencode-zen/test",
+                "name": "test",
+                "description": "opencode-zen/test"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3-flash",
+                "name": "GLM-5.3-Flash (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3-flash"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3",
+                "name": "GLM-5.3 (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3"
+              },
+              {
+                "value": "zhipu-coding/glm-5.3-flashx",
+                "name": "GLM-5.3-FlashX (Coding Plan)",
+                "description": "zhipu-coding/glm-5.3-flashx"
+              }
+            ]
+          },
+          {
+            "id": "thinking",
+            "name": "Thinking",
+            "category": "thought_level",
+            "type": "select",
+            "currentValue": "high",
+            "options": [
+              {
+                "value": "off",
+                "name": "Off"
+              },
+              {
+                "value": "auto",
+                "name": "Auto",
+                "description": "Auto-detect per prompt"
+              },
+              {
+                "value": "low",
+                "name": "low"
+              },
+              {
+                "value": "high",
+                "name": "high"
+              },
+              {
+                "value": "max",
+                "name": "max"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "prompt": {
+    "ok": true,
+    "latencyMs": 1253,
+    "stopReason": "end_turn",
+    "raw": {
+      "stopReason": "end_turn",
+      "usage": {
+        "inputTokens": 70,
+        "outputTokens": 3,
+        "totalTokens": 9673,
+        "cachedReadTokens": 9600
+      }
+    },
+    "updatesByType": {
+      "config_option_update": 1,
+      "available_commands_update": 2,
+      "session_info_update": 3,
+      "agent_message_chunk": 2,
+      "usage_update": 1
+    }
+  },
+  "clientCallbacks": {},
+  "errors": [],
+  "finishedAt": "2026-10-08T06:46:43.225Z",
+  "stderrTail": ""
+}

@@ -1,0 +1,33 @@
+# ── dsh-multi-acp ─────────────────────────────────────────────────────────
+# 运行期与本地临时产物（**不要**提交）
+
+# 依赖
+node_modules/
+probe/node_modules/
+
+# 本地脚本/验证产物：里面会有
+#   · DSH 会话日志（`*.jsonl.zstd` 解出来的明文，**用户隐私**）
+#   · 从 app.asar 解出来的 DSH 源码（`fmt-v3v4.js` / `persist-worker.cjs`，**他人版权**）
+#   · 截图、eval 结果、临时探针脚本
+tmp/
+
+# 引擎 CLI 在本目录留下的痕迹（探测/运行时由各 CLI 自己创建）
+.commandcode/
+.qoder/
+.qoder-cn/
+.agents/
+
+# 本地安装状态 / 备份 / 日志
+tools/.install-state.json
+*.bak-*
+*.log
+*.log.err
+*.jsonl
+*.jsonl.zstd
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

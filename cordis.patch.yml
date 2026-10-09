@@ -1,0 +1,53 @@
+# dsh-multi-acp · profile bundle patch
+#
+# 用 insert: 机制挂上本插件。!!js 标签里的表达式在配置求值时执行。
+#
+# ⚠️ 注意：本文件是**本插件自带**的 bundle patch，不是 profile 的
+#    $DSH_HOME/profiles/<profile>/cordis.patch.yml（那个含明文凭据，本插件永不写入）。
+#
+# 引擎定义请通过插件 config.engines 或 $DSH_HOME/multi-acp/engines.json 提供，
+# 不要写在这个文件里。
+
+- insert:
+    - id: multi-acp
+      name: dsh-multi-acp
+      config:
+        # 默认选中的引擎 id；留空则走官方 DSH agent loop
+        defaultEngine: omp
+        # 空闲多久后回收 ACP 子进程（毫秒）
+        idleDisposeMs: 30000
+        # 进程退出宽限（毫秒）
+        disposeGraceMs: 6000
+        # 引擎状态/会话映射文件；默认 <DSH_HOME>/multi-acp/
+        stateDir: !!js (process.env.DSH_HOME || ((process.env.HOME || process.env.USERPROFILE) + '/.dsh')) + '/multi-acp'
+        # 引擎注册表。空数组 = 全部来自内置 engines.js + stateDir/engines.json
+        engines: []
+        # ── 2026-10-09 新增（v0.1.15，详见 docs/evidence/A10-preset-tools-mcp-2026-10-09.md）──
+        #
+        # acp-* preset 的原生工具组合（会话回落到 DSH 原生 loop 时唯一的工具来源）。
+        #   true = 全部 7 组（skills/shell/fs/jobs/todo/ask-user/web，默认）
+        #   false = 只要 marker（旧行为，**会导致会话没有 shell/文件系统**，不建议）
+        #   ['skills','shell','fs'] = 只挂指定分组
+        presetTools: true
+        # 用 entry-local 的 dsh-fs-local 遮蔽宿主 sandboxed fs。
+        #   false（默认）= 沿用宿主沙箱：写工作区之外会被拒（FS_SANDBOX_DENIED，按设计）
+        #   true = 本 preset 的 fs 工具不受沙箱约束（消费侧 tool-fs 与 fs-local 同组，照 minimal preset）
+        unsandboxedFs: false
+        # MCP 随会话下发（B1）。默认继承 <DSH_HOME>/storages/mcp_connector.json 里 enabled 的连接。
+        mcp:
+          enabled: true
+          # 只下发这些（按连接 name / serverName / serverKey 匹配）；空 = 全部
+          include: []
+          # 排除这些
+          exclude: []
+        # 一次 ACP session/prompt 的超时（毫秒）。<= 0 = 不超时（长任务推荐）。
+        # 默认 300000。实测 omp 在大任务上会跑到 300s 被掐断，故做成可配置；
+        # 超时时会把"引擎最后一次 update"写进错误信息，便于判断卡在哪个工具上。
+        promptTimeoutMs: 300000
+        # SKILLS（2026-10-09）：ACP 协议没有 skills 字段，技能靠**磁盘目录**共享。
+        # 逐引擎配置在【引擎管理 → 编辑 → SKILLS 目录】里改（落在 <stateDir>/engines.json）：
+        #   skillDelivery: auto（引擎自扫 ~/.agents/skills，omp/OpenCode 适用）
+        #                | args（启动时追加 --skill <dir>，Command Code 适用，默认值）
+        #                | none
+        #   skillsDirs:   要暴露给该引擎的目录（空 = ~/.agents/skills，即 DSH 的 skill 目录）
+        #   skillArgsTemplate: args 模式的参数写法，默认 ['--skill', '{dir}']
