@@ -71,6 +71,10 @@ node scripts/diagnose-host-resolution.mjs
 - **`tools/install.ps1` 必须用宿主自带 pnpm**（`<Desktop>/resources/runtime/pnpm/bin/pnpm.cjs`，
   实测 11.7.0），不要用 PATH 上的 `pnpm`（实测 12.4.1）：不同大版本会重写 profile 的
   `node_modules/.modules.yaml` 与 `.pnpm/lock.yaml`，可能让加载器解析异常。
+  → 推论：**任何走 `dsh plugin` 的环境都必须先有 pnpm，且版本与宿主对齐** ——
+  官方 CLI 会把它转发给 pnpm。CI 里 `official-install` job 首次运行即因此失败：
+  `dsh: pnpm was not found` → exit 127（profile 初始化是成功的，包还没被评估到）。
+  该 job 现在先跑 `npm i -g pnpm@11.7.0`。
 - **Node 版本陷阱**：nvm 里有多个版本，`C:\nvm4w\nodejs` 指向当前 active。
   `profiles/node_modules/@deepseek-ai/*` 是指向**某个具体 nvm 版本下全局 npm 安装**的
   绝对路径链接 —— `nvm use` 换版本会让整棵树悬空或换内容。见 ADR-0003。
