@@ -1,5 +1,329 @@
 # CHANGELOG
 
+## 0.2.0 — 2026-10-10 🧱 **规范化：按官方 + 社区规范重构，并补上 AI 开发约束与决策记录**
+
+用户要求「遵循 dsh 官方教程与社区插件开发规范，构建规范文档、重构项目代码」。
+本轮**不改任何运行时行为**（除下面明列的两条配置行为变更），改的是**可验证性、可维护性与合规性**。
+全部结论都有实测证据；6 条决策写进 `docs/adr/`。
+
+### 1. 合规：补上市场/官方要求的清单字段
+- `package.json`：`dsh.plugin: true` + `dsh.kind: "server"`、**顶层 `engines.dsh`**
+  （实测宿主读的是 `engines.dsh`，不是 `dsh.engines.dsh` —— 见 app.asar 内的校验代码注释）、
+  `files` 白名单、`repository`、`scripts.check|test|typecheck|diagnose:host`。
+- `peerDependencies` 从 `"*"` 改为**有界范围**；宿主接口包**只**在 peer + dev 双声明
+  （市场规范 §6.6 的硬规则：打进 `dependencies` 会用旧副本遮蔽宿主）。
+- **不声明 `dsh.client.inject`**：读宿主源码得知该字段语义是**激活顺序**、不是导入白名单，
+  且宿主明确要求「不要把 Harness Client 包当模块 require」；工作样例
+  `@weibaohui/experts-management`（同为 slots+locale 用法）也只声明 `platform`。见 ADR-0005。
+- 公共 `schemastery` 依赖移除，改用宿主的 `@deepseek-ai/schemastery`。
+
+### 2. 配置面：Schemastery `Config` + 边界校验（新 `lib/config.js`）
+早期版本**刻意回避** schema（怕构造期抛错导致「启动失败」）。本轮解掉这个两难：
+- 解析**宿主那一份** schemastery（同步 `require` 可用，不需要顶层 await）；
+- 解析/构造**失败时不抛** → `Config === undefined`（Cordis 允许无 Config）+ 一条可见诊断；
+- **每字段都有 default，没有 `required()`** —— schema 只在"类型确实写错"时失败；
+- 对历史上宽松接受的形式用 `union`（字符串数字、`'true'`、`presetTools` 的 bool/数组/逗号串）
+  —— 实测 Schemastery **不做类型强转**，用严格 `S.number()` 会误伤用户 YAML；
+- `Config` 从**入口模块** `lib/index.js` 静态 re-export（Cordis 从入口读取）。
+
+新增三类跨字段告警，每条都对应一次真实事故：
+`promptTimeoutMs < idleTimeoutMs`（空闲闸形同虚设，会误杀长任务）、
+`idleTimeoutMs = 0`（只剩墙钟闸）、`mcp.include` 与 `mcp.exclude` 同名。
+
+### 3. 删掉一处**静默降级**
+`presetTools` 里的未知分组过去被 `normalizeGroups` 无声过滤 ——
+用户写 `['fs','shell','mcp']` 会得到一个不报错、也没有 mcp 工具组的会话。
+现在会报出未知组名**并列出可用分组**。
+
+### 4. 宿主包解析：把「假阴性」这一类坑永久关闭（ADR-0003）
+实测发现本插件的宿主包解析有**三条路，只有一条是真的**：
+
+| 上下文 | 命中 |
+|---|---|
+| 宿主进程内 | 宿主自带运行时 0.2.0-rc.2 ✅ |
+| 宿主外（裸 node / 验证脚本） | `profiles/node_modules` 的 junction → 全局 `@deepseek-ai/dsh@0.1.1-rc.2` ❌ |
+
+后果实例：`probeHostSymbols()` 在裸 node 下报 `dsh-llm 缺 AssistantStreamAccumulator`，
+而该符号在 0.2.0-rc.2 里由 `export * from './assistant-stream.ts'` 提供 —— **假阴性**
+（宿主内实测 `factory.createAgent.contract` = `ok:true` ×12/12，真实会话不受影响）。
+
+修复：探测报告一律带 `resolved` / `version` / `expected` / **`trustHost`**，版本不符时
+结论文本明确写「本次结论**不代表宿主**」；新增 `scripts/diagnose-host-resolution.mjs`
+（退出码 `0` 一致 / `1` 不一致 / `2` 无法判定）；`expected` 只接受**具体版本**
+（早期把 `engines.dsh` 的**范围**当基准，会产出「cordis 4.0.1 ≠ 宿主 >=0.2.0-rc.2 <0.3.0」这种废话）。
+顺带修掉一个真 bug：报错信息用 `req.resolve('./noop.js')` 反推锚点，而那个文件不存在 →
+`require.resolve` 自己抛 `MODULE_NOT_FOUND`，把真正的失败原因盖掉。
+
+### 5. 验证资产入库：`node --test`（**64 例**）
+过去所有验证脚本都在 `tmp/`（已 gitignore）→ **仓库里 0 测试、0 CI**。现在：
+- `test/pure-functions.test.mjs`（33）：preset-ids / 双闸超时 / 原生工具组合 /
+  session-map / MCP 映射与别名匹配 / skills 投递 / 权限档；
+- `test/config.test.mjs`（14）：含「自带 patch 的完整 config 必须能被 schema 求值」（防加载失败）；
+- `test/plugin-smoke.test.mjs`（10）：**用假 ctx 真跑 `apply()`** —— 断言 factory 被替换且可复原、
+  每个引擎注册一个 `acp-<id>` preset 且带 marker + 原生工具行、路由挂载、卸载不留残骸、
+  以及 `inject` 必须覆盖官方 agent-loop 的全部条目（漏一个会把宿主进程打死）；
+- `test/client-bundle.test.mjs`（7）：把 `lib/client.js` 在假 `window` 里**真的跑一遍**，
+  断言 `__ModuleLoader__.load({id, factory})` 形状 / `id` == 包名 / `inject: ['slots','locale']`
+  静态声明 / 只打同源 `/multi-acp` / 无 ESM 顶层 import；
+- `test/routes` 的补丁归一化未单独覆盖（见下方未完成项）。
+
+### 6. CI（新）
+`.github/workflows/ci.yml`：
+- **`test`（唯一阻断门禁）**：`node --test` × Node 22/24 + `npm run check`；
+- `typecheck`**非阻断**：类型基线尚有历史欠账，先把错误数打进 job summary 当收紧度量；
+- `official-install`**非阻断**：ubuntu 上 `npm i -g @deepseek-ai/dsh@0.2.0-rc.2`
+  （**精确版本** —— 裸装会命中损坏的 `latest` 线，讨论 #984/#1629 的经典坑）
+  → `dsh plugin --profile web add` → 断言 `--dump-config` 出现本插件。
+  本机做不到这件事：**公开 CLI 明确不管 Desktop profile**（ADR-0001）。
+
+### 7. 规范文档（新）
+- `AGENTS.md`：AI 开发的**约束集** —— 开工前必读清单、环境事实（Windows/pwsh、
+  硬链接陷阱、nvm 版本陷阱）、验证铁律、DoD、禁改范围、**已记录的偏离表**、反模式。
+- `CONTEXT.md`：术语表（唯一来源，零实现细节）。
+- `docs/adr/0001..0006`：安装路径 / JS 不迁 TS / 宿主包解析 / Schemastery 配置 /
+  不声明 client.inject / 路线 B 替换 private factory。
+- `docs/architecture/system.html`：架构图（archify 交付，9/9 检查通过，0 错 0 警）。
+
+### 8. 清理与修正
+- **删除死代码** `lib/index.full.js`（203 行的历史备份，入口从来不是它）。
+- **删除死配置**：自带 patch 里的 `idleDisposeMs` / `disposeGraceMs` 作为**插件级**配置
+  写在里面，但代码只在**引擎行**上读它们 —— 用户改它们毫无效果。已删除并写明该去哪儿改。
+- **修正 ISSUE-16：profile patch 整体替换 config，静默清掉了 A16 的调参。**
+  病根在 `tools/install.ps1` 的 `[4/5]` 步：它合成了一份**只含 2 个键**的覆盖行，
+  而 patch 语义是**整体替换**（不深合并）→ 把 bundle patch 的其余键全清成代码默认值，
+  其中包含 `promptTimeoutMs: 0`。**后果：A16 修的"墙钟误杀长任务"在本机从未生效，
+  且没有任何地方会报错。** 三处修复：
+  1. `install.ps1` **不再写入**覆盖行；已存在时改为**逐键核对并告警**；
+  2. 新增 `scripts/verify-profile-config.mjs`（`npm run verify:profile`）：
+     按官方组合语义算出**实际生效的配置**，与 bundle patch 意图逐键对比，
+     并区分「profile 显式覆盖」（有意）与「没写而被静默清掉」（本 ISSUE）；
+  3. 本机 profile 的覆盖行补成**完整 config**（保留其有意设的 `defaultEngine: ""`），
+     备份 `cordis.patch.yml.bak-20261010011114.-issue11`，其余字节逐字未变。
+  **验证**：新工具在本机退出码 **0**（只剩一项显式覆盖）；对备份跑 → 退出码 1，
+  精确报出 `promptTimeoutMs: 0 → 300000`。**A16 现在真正生效。**
+  顺带确认：`--dump-config` 无法核对本 profile —— Host 自带 CLI 直接拒绝
+  `profile "desktop" is managed exclusively by the Electron application`（ADR-0001 的直接证据）。
+- **更正** `docs/evidence/B0-ui-contract-findings.md` §5 的「悬空 junction」结论：
+  实测那些链接**有目标**（指向全局 `0.1.1-rc.2`），只是内容随环境漂移。
+- `docs/ISSUES.md` 新增 4 条 + 1 条更正；其中 **ISSUE-13（`trace.log` 记录引擎工具调用原标题，
+  含 token 与明文密码）优先级最高**，尚未修。
+
+### 9. 类型基线清零（43 → 0），CI 改为**阻断**
+Q1 定的是"松模式起步、逐模块收紧"。这一轮把首次运行 `tsc` 的 **43 个错误全部修掉**，
+并把 CI 的 `typecheck` 从非阻断改为**阻断**。清零过程中修掉的三类**真问题**（不是为过检查而改）：
+
+1. **`Agent` 的类型一直导错了路径。** 原 JSDoc 写
+   `import('@deepseek-ai/dsh-agent/types').Agent`。而运行时 `Agent` 的成员
+   （`session` / `status` / `inbox` / `options` / `ctx` / `cancel` / `whenIdle`）是通过
+   `runtime-types.d.ts` 里 `declare module './types.ts'` 的**模块增强**加进去的，
+   **只有从包根导入**（`index.d.ts` 有 `export * from './runtime-types.ts'`）才会带上。
+   引子路径 → `Agent` 退化成只剩 `{ id }` → 5 个"成员不存在"的错误。
+   换句话说：**我们对 agent 装配的类型检查此前是空转的。** 改正后它才真的在查。
+2. **选项对象此前没有 `@param`**，TS 只能从默认值推出部分字段 → 调用方传
+   `command` / `logger` / `defaultEngine` / `defaults` 会被判"未知属性"。
+   补齐 `probeCandidate` / `createRoutesHandler` / `AcpClient#initialize|newSession|loadSession`
+   / `AcpHost#openSession|resumeSession` / `loadEngines` / `resolveMcpServers` 等接缝后，
+   这些边界才真正进入检查范围。
+3. **`setStatus` 写的是宿主的 `readonly status`。** 宿主契约把 `Agent.status` 声明为
+   `readonly`（"mirrored on every `agent/status` transition"），而这个 agent 的持有者
+   就是我们自己 —— 没有别处维护这个镜像。与 ADR-0006 的 factory 越界同属
+   "路线 B 的固有代价"。处理：**显式 `@ts-expect-error` + 原因 + ADR 指针**。
+   `tsc` 会校验该抑制是否仍然有效 → DSH 一旦把它改成可写，这里会**反向报错**，
+   等于一个免费的升级探测器。
+
+顺带记下两个**当时顺手发现但未改**的东西（都进了 `docs/ISSUES.md`）：
+- **ISSUE-17**：`createCallbackSink` 的 `rawLines` 是**半接线的诊断钩子**
+  （它期望 `{ recordCallback }`，但调用方从不传，而 `AcpClient` 自己持有的是
+  `rawLines: string[]`，形状不符）→ 那行 `rawLines?.recordCallback?.()` 永远是 no-op。
+- `AcpHost` 的 `_onFsRead` / `_onFsWrite` **从未被赋值** —— 与 `initialize()` 里
+  如实声明 `fs: { readTextFile: false, writeTextFile: false }`（ISSUE-04）一致，
+  是**有意**的占位；已在构造函数里显式写 `undefined` 并注明，避免读者误以为 fs 桥是通的。
+
+### 10. Q6 批次二 · 第一个切片：抽出 `lib/agent-contract.js`
+批次二（拆 `acp-agent.js` / `client.js`）我自己的前提是"每切一块跑一次真实会话"，
+而真实会话要先重启 DSH。所以本轮只做**不需要真实会话护航**的那一片：
+
+**把宿主契约探测与错误分类从 `acp-agent.js` 抽成 `lib/agent-contract.js`**（135 行）。
+抽它的三个理由：**自包含**（只依赖 `dsh-imports.js`，不闭包运行时状态）、
+**边界清楚**（"宿主是否满足我们需要的形状" 与 "怎么装配 agent" 是两件事）、
+**已被测试覆盖**（`plugin-smoke` 里那条断言报告必须带 `resolved`/`version`/`trustHost` 的用例）。
+
+它动的是模块**边界**而不是运行时路径（调用方按名字 import），所以零行为风险。
+`acp-agent.js` 2001 → **1906** 行。
+
+**验证**：`npm run check` ✅ · `npm run typecheck` **0 错误** · `npm test` **68/68** ·
+既有验证脚本全绿（`verify-preset-mcp` **45/45**、`toolname-timeout` 31/31、
+`permission-bridge` 24/24、`ui` 81/81、`surface-contract` ✅、`live-flush` 18/18）·
+安装副本 **21/21** 逐文件 SHA256 一致（新增的那个文件也已同步）。
+
+**剩余**：`acp-agent.js` 的 factory / assembly / inbox / event-bridge 四个切片，
+以及 `client.js` 的拆分 —— 等重启后能跑真实会话时再做。
+
+### 11. 真实会话复验（2026-10-10，v0.2.0）—— 端到端通过
+
+在一次**干净重启**后（单次 apply、无 HMR 风暴），真实 Desktop 宿主里的完整证据：
+
+```
+host.probe            trustHost: true | expected: 0.2.0-rc.2
+                      summary: 宿主符号自检 OK（宿主 0.2.0-rc.2）
+                      4 个宿主包全部解析到 0.2.0-rc.2 且符号齐全
+apply.enter           rawKeys = 完整 10 键（ISSUE-16 修好的那份覆盖）
+install.factory-installed   engines ×4, defaultEngine: ""
+preset.register ×4         每引擎一个 acp-<id>，各 9 条原生工具行
+```
+
+**真实 ACP 会话**（应用恢复历史会话时被驱动）：
+
+```
+session-eca8ba23…  presetId=acp-omp
+  factory.resume.engine-from-map   找到引擎映射
+  factory.resume.spawning          起 omp 进程
+  session.mcp        4/4 个 MCP 下发（weknora×2, chrome-devtools, drawio）
+  session.permission workspace-write → 已映射
+  acp.turn.resume-from-projection  从持久投影恢复回合
+  acp.available_commands           上报 166 个命令
+session-35c8fd08…  map-miss → fallback-native（回落路径同样走通）
+```
+
+**这一轮顺带发现并修掉两个真缺陷**（都是"要跑真机才会暴露"的类型）：
+
+1. **`expectedHostVersion()` 找错了 runtime.json 的路径。** 宿主内 `expected` 恒为 `null`
+   → 自检永远报"期望未知"、`trustHost` 永远 false。真正的文件在
+   `resources/runtime/**primary-runtime**/runtime.json`，而 `resources/runtime/` 下只有
+   `versions.json`。由**真机 trace** 发现（`expected: null`），修后 `trustHost` 变为
+   `true`、`expected` 变为 `0.2.0-rc.2`。
+2. **重启脚本会静默起错 `DSH_HOME`。** 从"没有 `DSH_HOME` 的进程"启动 `.exe`，
+   Desktop 退回 `%USERPROFILE%\.dsh` → 起的是**另一个没有本插件的实例**，
+   而观测点还停在原 home → 现象是"插件突然不加载了"。`tools/restart-and-capture.ps1`
+   现在**拒绝**这种启动（要么传 `-DshHome`，要么先设 `$env:DSH_HOME`）。
+   同一轮也确认 `install.ps1` 不该用 PATH 上的 pnpm（12.4.1）去改由宿主 pnpm（11.7.0）
+   建立的 profile 树。
+
+**另一条重要结论**：ADR-0003 的核心论断**在真机上被直接证实** ——
+宿主进程内解析到的是 **0.2.0-rc.2**（宿主自带），而宿主外的诊断脚本解析到 **0.1.1-rc.2**。
+即"同一个 `probeHostSymbols()` 换个上下文就换答案"这件事**不再是推断**。
+
+### 12. 诊断数据被自己的测试污染（ISSUE-18）—— 差点据此改错一处**不该动**的策略
+
+**现象**：`<stateDir>/trace.log` 里，13 个不同 pid 上反复出现同一签名
+
+```
+install.factory-installed ×6  →  install.factory-bad-shape  →  factory-empty  →  factory-restored
+```
+
+**误判**：一度被读成"宿主返回了我们无法识别的 factory 形状"，于是着手考虑
+**放宽 `index.impl.js` 里那条"形状不对就拒绝替换"的保守策略**（见 ADR-0006）。
+
+**真相（实测）**：那些事件**不是宿主的**，是**我们自己的测试写进去的**。
+
+1. 把 `describeShape()` 补上"字符串带值"后，坏形状现出原形：
+   `object{target:string(not-a-factory)}` —— `not-a-factory` **只出现在**
+   `test/plugin-smoke.test.mjs` 的一条**故意构造的**用例里。
+2. 算术完全吻合：`test/plugin-smoke.test.mjs` 调 `apply()` **8** 次 =
+   6 次 install + 1 次 bad-shape + 1 次 empty。
+3. 时间戳吻合：出现该签名的 pid 最早在 `2026-10-09T22:46Z`（= 本轮第一次跑 `npm test` 的时段），
+   之后每跑一次测试就多一个 pid。
+4. 根因：`lib/trace.js` 曾在**模块加载期**把路径定死为
+   `D:\Ecode\.dsh\multi-acp\trace.log`（生产路径）。
+
+**结论**：**不放宽那条保守策略** —— 没有任何证据表明宿主会返回无法识别的形状；
+真机上的实际读数是 `replaced: object{target:object}` + `replacedWasOurs: false` + `depth: 1`，
+即**稳定地读到官方 factory 的 traced 代理**，完全落在已知形状内。
+
+**已修**：
+- `lib/trace.js` 改为**每次调用**解析路径；`DSH_MULTI_ACP_TRACE` 显式设为 `''`/`0`/`off`
+  表示关闭；并加兜底 —— **`node:test` 下绝不写默认路径**（运行器会设置 `NODE_TEST_CONTEXT`）。
+- `test/plugin-smoke.test.mjs` 显式把 trace 关掉（并在注释里说明意图）。
+- 验证：`npm test`（68 例、8 次 `apply()`）后 `trace.log` **delta 0**；显式重定向与显式关闭仍可用。
+
+**顺带保留的诊断仪表**（正是它破了此案，属长期资产而非临时脚手架）：
+`index.impl.js` 的 `apply.enter`（记录 Loader 实际传入的配置）与
+`install.factory-installed` 的 `replaced` / `replacedWasOurs` /
+`depth`（`acp-agent.js` 的 `MultiAcpFactory.depth`）——
+它们让"被替换的是什么、是不是我们自己的、套了几层"变成可读事实。
+
+**教训（已写入 `AGENTS.md` §3）**：**任何用假 ctx 调 `apply()` 的脚本/测试，必须先关掉或重定向
+trace。** 诊断数据被自己的测试污染，比没有诊断更糟 —— 它会让你去修一个不存在的问题。
+
+### 13. Q6 批次二 · 拆分完成：`acp-agent.js` 1916 → 4 个模块
+
+按"叶子优先、切一块验一次"的顺序拆完，每一步都跑 `check` + `typecheck` + `npm test` + 6 个既有验证脚本：
+
+| 新模块 | 行数 | 内容 |
+| --- | --- | --- |
+| `lib/acp-inbox.js` | 107 | 待处理输入的读写（`agent/inbox/spliced` 契约） |
+| `lib/acp-turn-runner.js` | 1012 | 回合驱动与 **ACP→DSH 事件桥**（唯一需要逐条满足会话日志契约的地方） |
+| `lib/acp-factory.js` | 307 | ACP 路由（会话 → 引擎 / 官方 loop）；即 ADR-0006 那处越界所在 |
+| `lib/acp-agent.js` | 524 | 只剩**装配**（scoped ctx / 挂 inbox / 跑 setup / 接 runner） |
+
+**顺带删掉两处死代码**（拆完才看得见）：`listEngines()`（全仓零引用）与
+`acp-agent.js` 的 `export { unwrapService }`（真实使用都直接来自 `dsh-imports.js`）。
+
+**拆分中的两条纪律**：
+1. **逐块验**：每切一块都跑全套门禁；`typecheck` 在这一步是主力 —— 它会抓出
+   "搬走了定义但忘了改 import" 这类错误（语法的 `node --check` 抓不到）。
+2. **只搬不改**：块的内容逐字保留，只调整 import 与 `export`。
+   验证方式：`\n\n\n` 计数在搬运前后都是 0（说明"折叠空行"是空操作，没伤到多行字符串），
+   且对 HEAD 基线的非空行多重集**零丢失**。
+
+**真实会话复验（重启后）**：
+
+```
+apply.enter ×1（干净单次）      install.factory-installed（depth:1, replaced: object{target:object}）
+preset.register ×4              host.probe trustHost=True（宿主 0.2.0-rc.2）
+acp.tool-call ×4   acp.live-flush.text ×12   ← 事件桥在真实会话里工作
+```
+
+最后两行是关键：它们由**被搬走的 `AcpTurnRunner`** 发出 —— 拆分后的模块正在真实会话里干活。
+
+**`client.js` 不拆，理由见下**（不是遗漏）：它是**单个浏览器 bundle**，
+由 `window.__ModuleLoader__.load({ id, factory })` 加载，工厂里的 `require` 只解析
+**加载器 seeded 的require table**（`react` 等平台模块），**解析不到插件自己的文件**。
+要拆成多文件就必须引入构建步骤（把多个源文件合成一个 bundle），
+而这与 **ADR-0005** 的既定决策（手写 bundle、不引 esbuild、避免构建链与断链风险）冲突。
+`lib/client.js` 目前 1286 行，`test/client-bundle.test.mjs` 把它当**一个整体**做契约测试。
+**该决定已补记进 [ADR-0005](./docs/adr/0005-no-client-inject-field.md#补记2026-10-10不做文件级拆分)
+与 `AGENTS.md` 的偏离表** —— 免得下一轮重新论证一遍。
+
+### 行为变更（明列）
+1. **配置类型错误现在会硬失败**（如 `defaultEngine: 123`），旧实现对任何非法值都静默回落默认值。
+   这是规范要求（"配置错误在最早可判定点明确失败"）。
+2. **`presetTools` 未知分组从静默丢弃变为告警**（行为本身不变：仍然丢弃）。
+
+### 未完成（诚实记录，非"已做"）
+- **Q6 批次二（拆分 `acp-agent.js` 1950 行 / `client.js` 1277 行）未做**：
+  安全的拆分需要比当前更细的测试覆盖（现在覆盖的是纯函数、装配层与 bundle 形状，
+  不是 `acp-agent` 的内部路径）。在有更细的测试前拆，就是把已验证过的代码路径置于回归风险中。
+- **真实会话复验未做**：本轮改动了 `index.impl.js` 的装配（config 接入 + 自检输出），
+  按 `AGENTS.md` §3 需要在真实 DSH 里跑一次会话后收尾。**安装副本已同步并逐文件校验**
+  （20/20 字节一致，入口加载链已实跑通过），重启后即可验。
+- **`tmp/verify-*.mjs` 未复跑**：它们依赖宿主符号，而宿主外解析到旧版本（ADR-0003），
+  需要在正确解析下重跑才能确认历史结论。
+
+### 验证
+- `npm test` → **68/68 通过**（含 4 例 `verify:profile` 回归用例）；`npm run check` 通过。
+- **`npm run typecheck` → 0 错误**（本轮从 43 清零；CI 已改为阻断）。
+  唯一保留的抑制是 `Agent.status` 的 readonly 越界，带原因与 ADR 指针。
+- **ISSUE-16 修复前后对比**（用真实 patch 文件 + 插件自己的 `normalizeConfig`）：
+  - 修复前（备份）：`node scripts/verify-profile-config.mjs --patch <备份>` → **退出码 1**，
+    精确报出 `promptTimeoutMs: 0 → 300000` 被静默清掉；
+  - 修复后：`npm run verify:profile` → **退出码 0**，只剩 `defaultEngine` 一项「显式覆盖」（用户有意）。
+  - 即 **A16 的"不限总时长"现在真正生效**。
+- **既有验证脚本复跑全绿**（本轮改了 `index.impl.js` / `mcp-servers.js` / `routing`，
+  这批脚本会直接 import 它们，是本轮**最有力的回归证据**）：
+  `verify-preset-mcp` ✅ · `verify-toolname-timeout` **31/31** ·
+  `verify-permission-bridge` **24/24** · `verify-ui` **81/81** ·
+  `verify-surface-contract` ✅ · `verify-live-flush` **18/18**
+  （合计 154+ 条断言）。
+  注：`verify-preset-mcp` 报"挂载 1/1 个目录（118 个 skill）"——118 是用户 skills 目录的
+  实时数量（README 里写的 119 已过时），与本轮改动无关。
+- `tools/install.ps1 -Sync` 实跑通过（走进新的 `[4/5]` 核对分支，无告警）。
+- 安装副本：`lib/` **20/20 逐文件 SHA256 一致**，`package.json` / `cordis.patch.yml` 一致，
+  版本号 = `0.2.0`；入口静态 import 链（含 `config.js`）在 repo 与安装副本**两处**都实跑通过。
+- 架构图：`deliver` 9/9 artifact checks，0 error / 0 warning。
+
+---
+
 ## 0.1.30 — 2026-10-10 🎨 **UI 打磨：引擎行"信息网格 + 诊断胶囊"（纯前端）**
 
 用户反馈"【引擎管理】这部分 UI 还是太简陋"。之前每行是 5~6 行**同字号等宽灰字**平铺

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "dsh-multi-acp · 架构（v0.2.0）",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1220, 700],
+    "views": [
+      {
+        "id": "main-path",
+        "label": "主路径：会话由引擎驱动",
+        "focus": ["host", "plugin", "pool", "omp"],
+        "note": "Host 的 agents.factory 槽位被替换后，选中 acp-* preset 的会话经 AcpHostPool 交给外部 ACP CLI。"
+      },
+      {
+        "id": "engine-data",
+        "label": "引擎是数据行",
+        "focus": ["plugin", "registry", "opencode", "cmdcode"],
+        "note": "内置 BUILTIN + <stateDir>/engines.json + config.engines 三层按 id 覆盖，新增引擎不改代码。"
+      },
+      {
+        "id": "injection",
+        "label": "MCP 注入与事件桥",
+        "focus": ["plugin", "pool", "mcpservers", "agent"],
+        "note": "DSH 的 MCP 连接随 session/new 与 session/load 下发；ACP 更新经事件桥落成 DSH 会话事件。"
+      },
+      {
+        "id": "management-ui",
+        "label": "引擎管理面",
+        "focus": ["browser", "routes", "registry"],
+        "note": "浏览器半边手写 __ModuleLoader__ bundle，经 ctx.webServer 的 /multi-acp 路由读写引擎行。"
+      }
+    ]
+  },
+  "components": [
+    { "id": "host", "type": "backend", "label": "DSH Desktop Host", "sublabel": "0.2.0-rc.2 · profile desktop", "pos": [40, 300], "size": [150, 64] },
+    { "id": "plugin", "type": "backend", "label": "dsh-multi-acp", "sublabel": "工厂替换 · config.js", "pos": [350, 300], "size": [150, 64] },
+    { "id": "registry", "type": "database", "label": "引擎注册表", "sublabel": "engines.js · engines.json", "pos": [350, 100], "size": [150, 60] },
+    { "id": "routes", "type": "backend", "label": "/multi-acp 路由", "sublabel": "ctx.webServer", "pos": [350, 500], "size": [150, 60] },
+    { "id": "pool", "type": "backend", "label": "AcpHostPool", "sublabel": "每引擎一进程 · 空闲回收", "pos": [660, 300], "size": [150, 64] },
+    { "id": "agent", "type": "backend", "label": "AcpAgent 事件桥", "sublabel": "surfaceOp · inbox", "pos": [660, 500], "size": [150, 60] },
+    { "id": "mcpservers", "type": "database", "label": "MCP 映射", "sublabel": "mcp_connector.json", "pos": [660, 100], "size": [150, 60] },
+    { "id": "omp", "type": "external", "label": "omp", "sublabel": "18.3.5 · 原生 exe", "pos": [970, 100], "size": [140, 60] },
+    { "id": "opencode", "type": "external", "label": "OpenCode", "sublabel": "2.0.23 · 原生 exe", "pos": [970, 300], "size": [140, 60] },
+    { "id": "cmdcode", "type": "external", "label": "Command Code", "sublabel": "1.76.0 · pwsh shim", "pos": [970, 500], "size": [140, 60] },
+    { "id": "browser", "type": "frontend", "label": "DSH Web 客户端", "sublabel": "settings.section 面板", "pos": [40, 500], "size": [150, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "DSH Host 进程内", "wraps": ["plugin", "registry", "routes", "pool", "agent", "mcpservers"] },
+    { "kind": "region", "label": "外部 ACP CLI 子进程", "wraps": ["omp", "opencode", "cmdcode"] }
+  ],
+  "connections": [
+    { "id": "factory-swap", "from": "host", "to": "plugin", "label": "替换 agents.factory", "variant": "emphasis" },
+    { "id": "engine-rows", "from": "plugin", "to": "registry", "label": "按 id 装载引擎行", "variant": "dashed" },
+    { "id": "preset-gate", "from": "plugin", "to": "pool", "label": "preset 决定引擎", "variant": "emphasis" },
+    { "id": "register-routes", "from": "plugin", "to": "routes", "label": "注册路由", "labelDy": 24 },
+    { "id": "ui-fetch", "from": "browser", "to": "routes", "label": "同源 fetch" },
+    { "id": "mcp-inject", "from": "pool", "to": "mcpservers", "label": "下发 MCP", "variant": "dashed", "fromSide": "top", "toSide": "bottom" },
+    { "id": "update-dispatch", "from": "pool", "to": "agent", "label": "session/update", "labelDy": 24, "fromSide": "bottom", "toSide": "top" },
+    { "id": "acp-omp", "from": "pool", "to": "omp", "label": "ACP JSON-RPC / stdio", "variant": "emphasis" },
+    { "id": "acp-opencode", "from": "pool", "to": "opencode" },
+    { "id": "acp-cmdcode", "from": "pool", "to": "cmdcode" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "引擎是数据行", "items": ["BUILTIN → <stateDir>/engines.json → config.engines，按 id 整体覆盖", "新增引擎 = 加一行配置，不改代码"] },
+    { "dot": "emerald", "title": "会话驱动路径", "items": ["未声明引擎的会话回落官方 factory，不破坏默认行为", "preset 决定引擎；AcpHostPool 复用进程并按空闲回收"] },
+    { "dot": "rose", "title": "注入与边界", "items": ["MCP 随 session/new 与 session/load 下发，ACP 无审批字段", "skills 靠磁盘目录；会话权限档映射引擎 permissionMode"] },
+    { "dot": "amber", "title": "验证与规范（v0.2.0）", "items": ["npm test：node --test，64 例（纯函数 / bundle 契约 / 装配冒烟）", "diagnose-host-resolution：宿主外结论必须先自曝解析版本（ADR-0003）", "AGENTS.md + CONTEXT.md + 6 条 ADR：AI 开发的约束与术语", "CI：test 阻断；typecheck 与官方安装路径冒烟为非阻断"] }
+  ]
+}

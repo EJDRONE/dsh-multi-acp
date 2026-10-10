@@ -6,10 +6,13 @@
 > 设计核心：**引擎是数据行，不是代码** —— 新增一个引擎 = 加一行配置。
 
 - **目标宿主**：DSH Desktop 0.2.0-rc.2（`DSH_HOME = D:\Ecode\.dsh`，profile = `desktop`）
-- **当前版本**：**0.1.20**（2026-10-09）
+- **当前版本**：**0.2.0**（2026-10-10）
 - **状态**：🟢 **端到端跑通，并已在 DSH 内完成真实会话验证**（引擎路由 / preset 工具面 / MCP 注入 / 工具回显 / 引擎命令回显 / 引擎管理 UI）
 - **实测可用的引擎**：omp · Qoder CLI CN（`--acp`）· OpenCode · Command Code —— 四家 ACP 往返 + MCP 注入均已验证（见文末"引擎环境事实"）
-- **文档**：[设计](./docs/DESIGN.md) · [引擎规格](./docs/ENGINE-SPEC.md) · [验证方案](./docs/VERIFICATION.md) · [UI 设计](./docs/UI-DESIGN.md) · [ACP 集成](./docs/ACP-INTEGRATION.md) · [问题清单](./docs/ISSUES.md) · [路线图](./docs/ROADMAP.md) · [证据](./docs/evidence/) · [变更日志](./CHANGELOG.md)
+- **文档**：**[AI 开发约束（AGENTS.md）](./AGENTS.md)** · **[术语表（CONTEXT.md）](./CONTEXT.md)** · **[决策记录（ADR）](./docs/adr/)** · [架构图](./docs/architecture/system.html) · [设计](./docs/DESIGN.md) · [引擎规格](./docs/ENGINE-SPEC.md) · [验证方案](./docs/VERIFICATION.md) · [UI 设计](./docs/UI-DESIGN.md) · [ACP 集成](./docs/ACP-INTEGRATION.md) · [问题清单](./docs/ISSUES.md) · [路线图](./docs/ROADMAP.md) · [证据](./docs/evidence/) · [变更日志](./CHANGELOG.md)
+
+> 新会话请**先读 [`AGENTS.md`](./AGENTS.md)**：它规定了证据等级、验证命令、禁改范围与已记录的偏离。
+> 术语以 [`CONTEXT.md`](./CONTEXT.md) 为唯一来源；设计决策在 [`docs/adr/`](./docs/adr/)。
 
 ---
 
@@ -52,13 +55,18 @@ dsh_multi_acp/
 ├── package.json           插件清单（dsh.bundle.patch 指向 cordis.patch.yml）
 ├── cordis.patch.yml       本插件自带的 bundle patch（⚠️ 不是 profile 那份），含全部配置项与注释
 ├── lib/
-│   ├── index.js           插件入口（诊断加载器）→ 转发到 index.impl.js
-│   ├── index.impl.js      ⭐ 真正实现：替换 agents.factory + register preset + 配置归一化
+│   ├── index.js           插件入口（诊断加载器 + re-export Config）→ 转发到 index.impl.js
+│   ├── index.impl.js      ⭐ 真正实现：替换 agents.factory + register preset + 4 个 ctx.effect
+│   ├── config.js          ⭐ 配置面：Schemastery `Config` + 边界/跨字段校验（ADR-0004）
 │   ├── engines.js         ⭐ 引擎注册表（数据行）+ 探测/描述 —— 新增引擎改这里
 │   ├── preset-native.js   ⭐ acp-* preset 的原生工具组合（抄官方 standard preset 的行）
 │   ├── mcp-servers.js     ⭐ DSH MCP 存储 → ACP McpServer 映射与过滤
 │   ├── engine-runtime.js  引擎运行时观测（命令/技能上报、MCP 下发摘要 → UI 诊断行）
-│   ├── acp-agent.js       ⭐ 工厂 + Agent 组装 + 事件桥接（A1/A2/A6/A12）
+│   ├── acp-factory.js     ⭐ ACP 路由工厂：会话 → 引擎 or 官方 loop（ADR-0006）
+│   ├── acp-agent.js       ⭐ ACP 根 agent 的**装配**（scoped ctx / inbox / setup / 接 runner）
+│   ├── acp-turn-runner.js ⭐ 回合与事件桥（最长的一块；会话日志契约都在这里）
+│   ├── acp-inbox.js       待处理输入（`agent/inbox/spliced` 事件的读写）
+│   ├── agent-contract.js  宿主契约探测与错误分类
 │   ├── acp-client.js      ACP 客户端（官方 SDK）+ 超时预算
 │   ├── acp-host.js        每引擎一个共享进程宿主 + 试连
 │   ├── routes.js          `/multi-acp/*` 宿主路由（引擎 CRUD/试连/命令）
@@ -66,12 +74,14 @@ dsh_multi_acp/
 │   ├── session-map.js     dshSessionId ↔ acpSessionId 映射（resume 路由用）
 │   ├── preset-ids.js      preset id 生成/解析（acp-<engineId>）
 │   ├── preset-marker.js   每个 preset 的 marker 行（标识 engineId）
-│   ├── dsh-imports.js     宿主包解析 / 服务解包 / 符号自检
-│   └── index.full.js      （历史备份，**不是入口**，勿用）
+│   └── dsh-imports.js     宿主包解析 / 服务解包 / 解析上下文自检（ADR-0003）
+├── test/                  node --test 行为测试（纯函数 / bundle 契约 / 装配冒烟）
+├── scripts/               diagnose-host-resolution.mjs（宿主解析诊断）
+├── types/globals.d.ts     手写全局声明（window.__ModuleLoader__）
 ├── probe/                 可复用 ACP 探针（`probe-acp.mjs` 等）
 ├── tools/                 安装与重启脚本（见「运维」）
-├── tmp/                   验证/诊断脚本与临时产物
-└── docs/                  设计 / 引擎规格 / UI / ACP 集成 / 验证 / 问题 / 路线图 / 证据
+├── tmp/                   验证/诊断脚本与临时产物（**已 gitignore**）
+└── docs/                  设计 / 引擎规格 / UI / ACP 集成 / 验证 / 问题 / 路线图 / ADR / 架构图 / 证据
 ```
 
 ---
@@ -79,6 +89,12 @@ dsh_multi_acp/
 ## 配置
 
 `cordis.patch.yml` 的 `config`：
+
+> ⚠️ **改配置前必读**：非 `insert` 的 patch 行按 `id` 定位后是**整体替换**
+> 该 Entry 的 `config`（**不是深合并**）。所以 profile 里写一份只含两三个键的覆盖，
+> 等于把**其余键清成代码默认值** —— 而且不会报错。
+> 本机就因此让 A16 的 `promptTimeoutMs: 0` 从未生效过（见 `docs/ISSUES.md` ISSUE-16）。
+> 改完跑 `npm run verify:profile` 核对**实际生效的配置**。
 
 | 字段 | 默认 | 说明 |
 | --- | --- | --- |
@@ -179,8 +195,12 @@ pwsh -File tmp\verify-install.ps1      # 逐文件 SHA256 对比 repo ↔ 安装
 | `tmp\reframe-all.ps1` | 对 4 个曾损坏的会话做 6 契约自检 |
 | `tmp\check-running.ps1`、`tmp\trace-window.mjs`、`tmp\ztools.mjs` | 进程/插件加载判据、trace 时间窗、单会话结构分析 |
 
-`node --check lib\*.js` + 上表即为本地验收；**必须真跑**的项目（引擎路由、MCP 是否被接受、skill 发现）
-的判定手段见 [VERIFICATION.md §13](./docs/VERIFICATION.md)。
+`npm run check` + `npm test`（64 例）+ `node scripts/diagnose-host-resolution.mjs` 即为本地验收；
+**必须真跑**的项目（引擎路由、MCP 是否被接受、skill 发现、真实会话）的判定手段见 [VERIFICATION.md §13](./docs/VERIFICATION.md)。
+
+> ⚠️ **宿主外的验证结论必须自曝其短**：裸 node 解析到的宿主包**不是宿主那一份**
+> （实测 0.1.1-rc.2 vs 宿主 0.2.0-rc.2）。跑任何宿主契约断言前先跑诊断脚本，
+> 或直接用 `--expect <宿主版本>`。原因与处置见 [ADR-0003](./docs/adr/0003-host-package-resolution.md)。
 
 ---
 
