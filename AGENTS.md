@@ -68,6 +68,13 @@ node scripts/diagnose-host-resolution.mjs
   那里**没有本插件**，而观测点（`trace.log` / `load-report.txt`）还停在原来的 `DSH_HOME`。
   现象是"插件突然不加载了"，而真机只是起错了 home。
   → `tools/restart-and-capture.ps1` 现在**拒绝**在没有 `DSH_HOME` 且未传 `-DshHome` 时启动。
+- **`tools/restart-and-capture.ps1` 会杀掉承载本 AI 会话的宿主**（2026-10-10 实测，浪费了约 15 分钟）：
+  它 `Stop-Process -Force` 掉**全部** `DeepSeek Harness` 进程 —— 包括跑着本会话的那一个，
+  于是本会话的**持久 shell 永久卡死**（之后每条命令都无输出、直到超时；`echo` 也一样）。
+  - 处置：重启之后**改用新的具名 shell**（`bash` 传 `name` + `ready`）继续干活，**不要**等旧 shell 恢复。
+  - 另：**不要用管道接它的输出**（`… | tail`）—— 新实例会持有写端，管道到不了 EOF，你会**一个字都看不到**。
+    要看结果就直接读 `$DSH_HOME/dsh-desktop-boot.log`（脚本的摘要本来就是从它抓的）
+    与 `$DSH_HOME/multi-acp/trace.log` 里的 `apply.enter` / `install.factory-installed` 时间戳。
 - **`tools/install.ps1` 必须用宿主自带 pnpm**（`<Desktop>/resources/runtime/pnpm/bin/pnpm.cjs`，
   实测 11.7.0），不要用 PATH 上的 `pnpm`（实测 12.4.1）：不同大版本会重写 profile 的
   `node_modules/.modules.yaml` 与 `.pnpm/lock.yaml`，可能让加载器解析异常。
