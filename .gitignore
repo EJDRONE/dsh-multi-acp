@@ -31,3 +31,9 @@ tools/.install-state.json
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 架构图的 visual-check **副产物**（截图 + 联络表，~600 KB，**可再生**）：
+#   node bin/archify.mjs visual-check docs/architecture/system.html
+# 只提交规格（*.architecture.json）、交付物（*.html）与回执（*.visual-check.json）。
+docs/architecture/*.visual-check.*.png
+docs/architecture/*.visual-check.html

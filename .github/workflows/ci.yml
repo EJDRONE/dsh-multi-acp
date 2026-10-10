@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── 唯一**阻断**门禁 ────────────────────────────────────────────────────
+  # 判据：node --test 全绿 + 每个源文件语法可加载。
+  # 这两件事零依赖、秒级、且全部是行为断言（不是快照/文本匹配）。
+  test:
+    name: test (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 与 package.json 的 engines.node（^22.19.0 || >=24.0.0）对齐。
+        node: ['22.x', '24.x']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: 语法检查
+        run: npm run check
+      - name: 行为测试
+        run: npm test
+      - name: 宿主解析诊断（不阻断，仅留证据）
+        run: node scripts/diagnose-host-resolution.mjs || true
+        env:
+          # CI 里没有宿主进程，用声明版本当基准，让诊断能给出确定结论
+          DSH_HOST_VERSION: 0.2.0-rc.2
+
+  # ── 阻断：类型基线（2026-10-10 已清零）─────────────────────────────────
+  # Q1 定的是"松模式起步、逐模块收紧"（见 docs/adr/0002-js-not-typescript.md）。
+  # 那一轮把 43 个错误全部修掉（逐模块补 JSDoc 字段描述），并把唯一一处
+  # 真实的契约越界（host 把 Agent.status 声明为 readonly）改成**带原因的显式抑制**，
+  # 而不是留红。既然已清零，这里就**阻断** —— 不让它悄悄涨回去。
+  # 注意：tsc 会检查 `@ts-expect-error` 是否**仍然**有效；DSH 若把该成员改成可写，
+  # 这里会反向报错，等于一个免费的升级探测器。
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+  # ── 非阻断：官方安装路径冒烟 ────────────────────────────────────────────
+  # 回答的是"这个包能不能被**官方**管线装进一个干净 profile"——
+  # 而这正是本机做不到的事：目标宿主是 DSH Desktop，官方 CLI 不管 Desktop profile
+  # （见 docs/adr/0001-install-path-desktop.md）。所以放到 ubuntu 上跑 web profile。
+  #
+  # 为什么非阻断：`dsh` 是 0.x 开发预览，CLI 参数与包解析会变；把它做成阻断门禁
+  # 会让上游的一次 breaking change 卡死所有 PR。人工看这条的红绿即可。
+  #
+  # 参考：讨论 #1629（官方 scaffold RFC）里社区模板的 CI 做的正是这套
+  #      build → pack → `dsh plugin --profile web add` → `--dump-config` → 起 web。
+  official-install:
+    name: 官方安装路径冒烟（非阻断）
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+      - name: 装与宿主同版本的 dsh CLI（**精确版本**，绝不裸装）
+        # 裸装会命中 `latest` 标签 —— 实测 `@deepseek-ai/dsh-tools@latest` 指向
+        # 损坏的 0.0.1-rc.1 线（讨论 #984 / #1629 的经典坑）。
+        run: npm i -g @deepseek-ai/dsh@0.2.0-rc.2
+      - run: dsh --version
+      - name: 走官方管线装进干净 profile
+        run: dsh plugin --profile web add "$GITHUB_WORKSPACE"
+      - name: 断言配置层出现本插件
+        run: dsh --profile web --dump-config | grep -q 'dsh-multi-acp'
+      - name: 断言装配进 bundles
+        run: grep -q 'dsh-multi-acp' "$HOME/.dsh/profiles/web/package.json"

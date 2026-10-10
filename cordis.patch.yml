@@ -14,10 +14,11 @@
       config:
         # 默认选中的引擎 id；留空则走官方 DSH agent loop
         defaultEngine: omp
-        # 空闲多久后回收 ACP 子进程（毫秒）
-        idleDisposeMs: 30000
-        # 进程退出宽限（毫秒）
-        disposeGraceMs: 6000
+        # 注意：`idleDisposeMs` / `disposeGraceMs`（ACP 子进程空闲回收与退出宽限）
+        # **不是插件级配置** —— 它们只在**引擎行**上生效（见 lib/engines.js 的 BUILTIN
+        # 与 lib/acp-host.js 的 this.idleDisposeMs）。
+        # 之前这两行作为插件配置写在这里，实际从未被读取（ISSUES「死配置」），已删除。
+        # 要改就改引擎行：<stateDir>/engines.json 或【引擎管理】里的编辑面板。
         # 引擎状态/会话映射文件；默认 <DSH_HOME>/multi-acp/
         stateDir: !!js (process.env.DSH_HOME || ((process.env.HOME || process.env.USERPROFILE) + '/.dsh')) + '/multi-acp'
         # 引擎注册表。空数组 = 全部来自内置 engines.js + stateDir/engines.json
