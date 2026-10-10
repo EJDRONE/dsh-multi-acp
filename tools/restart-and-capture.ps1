@@ -16,10 +16,26 @@
 param(
   [string]$ExePath = 'D:\Programs\Deepseek\DeepSeek Harness.exe',
   [string]$LogFile = 'D:\Ecode\.dsh\dsh-desktop-boot.log',
-  [int]$WaitSeconds = 20
+  [int]$WaitSeconds = 20,
+  [string]$DshHome = ''
 )
 
 $ErrorActionPreference = 'Stop'
+
+# ⚠️ **必须**显式确定 DSH_HOME（2026-10-10 实测事故）。
+# Desktop 用它决定加载哪个 profile。若从"环境里没有 DSH_HOME"的进程启动
+#（例如从 AI 会话 / 计划任务 / 另一个 shell），它会退回默认 `%USERPROFILE%\.dsh` →
+# 你启动的是**另一个实例**（那里没有本插件），而观测点（trace / load-report）
+# 还停在原来的 `DSH_HOME` → 现象是"插件突然不加载了"，极难排查。
+if ([string]::IsNullOrWhiteSpace($env:DSH_HOME)) {
+  if ([string]::IsNullOrWhiteSpace($DshHome)) {
+    throw "DSH_HOME 未设置，且未传 -DshHome。拒绝启动：Desktop 会退回 %USERPROFILE%\.dsh 起一个**没有本插件**的实例。请先 `$env:DSH_HOME='D:\Ecode\.dsh'` 或传 -DshHome。"
+  }
+  $env:DSH_HOME = $DshHome
+  Write-Host "  DSH_HOME 未设置 → 显式使用 $DshHome" -ForegroundColor Yellow
+} else {
+  Write-Host "  DSH_HOME = $env:DSH_HOME" -ForegroundColor DarkGray
+}
 
 Write-Host "=== 重启 DSH Desktop 并捕获启动日志 ===" -ForegroundColor Cyan
 

@@ -16,10 +16,15 @@
      结论：改完源码若要确保同步，跑 `pnpm install`（本脚本 -Sync 开关），不要手工 copy。
 
   ── 本次改动的 4 处 ──────────────────────────────────────────
-    1. `<profile>/cordis.patch.yml`   追加插件配置行（外科式，逐字节校验）
+    1. `<profile>/cordis.patch.yml`   只**核对**（不再合成配置覆盖行 —— 见 ISSUE-11）
     2. `<profile>/package.json`       dependencies + dsh.profile.bundles
     3. `<profile>/node_modules/...`   pnpm 安装产物
     4. `<profile>/pnpm-lock.yaml`     pnpm 更新（先备份）
+
+  ⚠️ 为什么不写 cordis.patch.yml：patch 行是**整体替换** config（不是深合并）。
+     早期版本会合成一份只含 2 个键的覆盖，实际效果是把 bundle patch 的其余键
+     （含 A16 的 `promptTimeoutMs: 0`）静默清成代码默认值。现在改为只做核对，
+     由 `scripts/verify-profile-config.mjs` 逐键报出谁被清掉了。
 
   回滚：tools\rollback.ps1（覆盖以上全部 4 处）
 
@@ -128,32 +133,35 @@ if ($PSCmdlet.ShouldProcess($profileDir, 'Run pnpm install')) {
 if (-not (Test-Path $installed)) { throw "pnpm install 后仍找不到 $installed" }
 Write-Host "  ✓ 已安装到 $installed" -ForegroundColor Green
 
-# ── [4] cordis.patch.yml：外科式追加配置行（可选）──────────
-Write-Host "`n[4/5] cordis.patch.yml 追加配置行" -ForegroundColor Cyan
-Write-Host "  注意：这只是在覆盖 bundle 自带 patch 的默认 config，不是插件加载入口" -ForegroundColor DarkGray
+# ── [4] cordis.patch.yml：**不再合成覆盖行**，改为检出部分覆盖 ─────────
+# 为什么改（ISSUE-11）：patch 行按 id 定位后是**整体替换** config（不是深合并）。
+# 早期这里会合成一份只含 defaultEngine / verboseStartup 的覆盖 ——
+# 那不是"只覆盖这两项"，而是把 bundle patch 的其余键（含 A16 的
+# promptTimeoutMs: 0）**静默清成代码默认值**，而且没有任何地方会报错。
+# 现在：一步都不写；若已存在覆盖行，就用验证器逐键核对谁被清掉了。
+Write-Host "`n[4/5] 检查 profile 的 multi-acp 覆盖行（本脚本不再写入）" -ForegroundColor Cyan
 $raw = [System.IO.File]::ReadAllText($patchFile)
 $hasBom = $false
 $nl = if ($raw.Contains("`r`n")) { "`r`n" } else { "`n" }
 
 if ($raw -match "(?m)^-\s*id:\s*$([regex]::Escape($PluginId))\s*$") {
-  Write-Host "  已存在 id: $PluginId 的行，跳过" -ForegroundColor DarkGray
-  $state.appendedRows = @('(already present)')
-} else {
-  $block = @(
-    '',
-    '# --- dsh-multi-acp (external ACP engines as DSH root agents) ---',
-    "- id: $PluginId",
-    "  name: $PluginName",
-    '  config:',
-    '    defaultEngine: ""',
-    '    verboseStartup: true'
-  ) -join $nl
-  $newContent = $raw.TrimEnd("`r", "`n") + $nl + $block + $nl
-  if ($PSCmdlet.ShouldProcess($patchFile, 'Append config row')) {
-    [System.IO.File]::WriteAllText($patchFile, $newContent, (New-Object System.Text.UTF8Encoding($hasBom)))
+  Write-Host "  已存在覆盖行 → 逐键核对它是否清掉了 bundle patch 的键…" -ForegroundColor DarkGray
+  $verify = Join-Path $pluginRoot 'scripts\verify-profile-config.mjs'
+  if (Test-Path $verify) {
+    & node $verify --profile $Profile 2>&1 | ForEach-Object { "  $_" }
+    if ($LASTEXITCODE -ne 0) {
+      Write-Host "  ⚠️ 上面标了 '被静默清掉' 的键：请在覆盖行里把它们**重述一遍**（整体替换语义）。" -ForegroundColor Yellow
+      Write-Host "     直接删掉该行也可以，但会丢掉它有意设的值（见上面标 '显式覆盖' 的项）。" -ForegroundColor Yellow
+    }
+  } else {
+    Write-Host "  未找到 scripts\verify-profile-config.mjs —— 跳过核对" -ForegroundColor DarkGray
   }
-  $state.appendedRows = @($block -split "`n")
-  Write-Host "  ✓ 已追加" -ForegroundColor Green
+  $state.appendedRows = @('(already present — not modified)')
+} else {
+  Write-Host "  profile 里没有 multi-acp 覆盖行 → 生效配置 = bundle patch 那份（推荐形态）。" -ForegroundColor DarkGray
+  Write-Host "  本脚本**刻意不再合成**覆盖行：部分覆盖会整体替换 config 并清掉未重述的键。" -ForegroundColor DarkGray
+  Write-Host "  真要覆盖请手写完整 block，改完跑：node scripts/verify-profile-config.mjs" -ForegroundColor DarkGray
+  $state.appendedRows = @('(none — nothing written)')
 }
 
 # ── [5] 校验 + 记录状态 ───────────────────────────────────
