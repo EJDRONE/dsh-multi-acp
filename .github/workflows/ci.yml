@@ -83,6 +83,16 @@ jobs:
         # 损坏的 0.0.1-rc.1 线（讨论 #984 / #1629 的经典坑）。
         run: npm i -g @deepseek-ai/dsh@0.2.0-rc.2
       - run: dsh --version
+      - name: 装 pnpm（`dsh plugin` 会把它转发给 pnpm）
+        # 首次运行（run 38023573535）失败的根因就是这个：`dsh plugin --profile web add`
+        # 在 profile 目录里**转发给 pnpm**，而 runner 上没有 pnpm：
+        #   dsh: pnpm was not found; install pnpm and make it available on PATH.
+        #   ##[error]Process completed with exit code 127
+        # 注意 profile 的初始化**是成功的**（`dsh: initialized profile web at …`），
+        # 所以这不是打包问题 —— 连我们的包都还没被评估到。
+        # 版本精确 pin 11.7.0，与宿主 runtime.json 声明的一致：大版本不同会重写 profile 的
+        # node_modules/.modules.yaml 与 lock（见 AGENTS.md §2）。
+        run: npm i -g pnpm@11.7.0
       - name: 走官方管线装进干净 profile
         run: dsh plugin --profile web add "$GITHUB_WORKSPACE"
       - name: 断言配置层出现本插件
