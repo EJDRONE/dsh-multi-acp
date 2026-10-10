@@ -65,7 +65,6 @@
   "cards": [
     { "dot": "cyan", "title": "引擎是数据行", "items": ["BUILTIN → <stateDir>/engines.json → config.engines，按 id 整体覆盖", "新增引擎 = 加一行配置，不改代码"] },
     { "dot": "emerald", "title": "会话驱动路径", "items": ["未声明引擎的会话回落官方 factory，不破坏默认行为", "preset 决定引擎；AcpHostPool 复用进程并按空闲回收"] },
-    { "dot": "rose", "title": "注入与边界", "items": ["MCP 随 session/new 与 session/load 下发，ACP 无审批字段", "skills 靠磁盘目录；会话权限档映射引擎 permissionMode"] },
-    { "dot": "amber", "title": "验证与规范（v0.2.0）", "items": ["npm test：node --test，64 例（纯函数 / bundle 契约 / 装配冒烟）", "diagnose-host-resolution：宿主外结论必须先自曝解析版本（ADR-0003）", "AGENTS.md + CONTEXT.md + 6 条 ADR：AI 开发的约束与术语", "CI：test 阻断；typecheck 与官方安装路径冒烟为非阻断"] }
+    { "dot": "rose", "title": "注入与边界", "items": ["MCP 随 session/new 与 session/load 下发，ACP 无审批字段", "skills 靠磁盘目录；会话权限档映射引擎 permissionMode"] }
   ]
 }

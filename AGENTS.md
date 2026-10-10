@@ -229,7 +229,62 @@ process.env.DSH_MULTI_ACP_TRACE = 'D:/tmp/my-trace.log'   // 或重定向
 [ ] CONTEXT.md / docs/adr / docs/ISSUES 已同步
 [ ] 架构有变 → 重新交付 docs/architecture/system.html
 [ ] git status 里没有 tmp/ 产物、探测 JSON、会话日志
+[ ] 发版时：按 §10 的发布流程走（干净检出验证 → 每个提交独立可跑 → tag → push → topic）
 ```
 
 > 不要**只**改代码就交付。本仓库的历史教训是：**没写下来的结论，下一轮会被重新踩一遍**
 > —— `docs/evidence/` 里那些文件就是这么来的。
+
+---
+
+## 10. 发布流程（首次于 v0.2.0 成文）
+
+> 2026-10-10 之前本仓库**没有任何发布约定**（从无 tag），这一节是那次发布时补的。
+
+### 版本与 tag
+
+- 版本号在 `package.json#version`；三处必须一致：`package.json` / `package-lock.json` / `README.md` 顶部。
+- tag：**annotated**，形如 `v0.2.0`（与 `package.json` 同号，带 `v` 前缀），tag 信息直接写发布说明。
+- **没有 tag 就不算发布**：`package.json` 里 bump 了但没打 tag，用户无从引用。
+
+### 顺序
+
+```
+[ ] 1  DoD 全过（§4）+ 收尾清单全勾（§9）
+[ ] 2  干净检出验证：复制仓库（排除 node_modules/.git/tmp）→ npm ci → check / test / typecheck
+       —— 证明的是"一次全新 clone 能跑"，本地能跑不算
+[ ] 3  提交：按**每个提交都能独立跑**切分（见下）
+[ ] 4  worktree 隔离复验：git worktree add --detach <sha> → npm ci → check/test/typecheck
+[ ] 5  git tag -a vX.Y.Z -F <说明文件>
+[ ] 6  git push origin main && git push origin vX.Y.Z
+[ ] 7  GitHub Release：用 tag 说明；仓库 Settings → Topics 加 `dsh-plugin`
+       （市场每 2 小时按 topic 扫描收录，见 STANDARD §0）
+[ ] 8  推完核两件事：Actions 三个 job（test/typecheck 阻断）+ 重启 DSH 后插件页版本号 == package.json
+```
+
+### 提交切分：**每个提交必须独立可跑**
+
+这条是 v0.2.0 发布时**返工换来的**：第一版按主题切了 5 个提交，
+但 `index.impl.js` 同时被三处引用（config 的 `normalizeConfig`、拆分出的 `./acp-factory.js`、
+`dsh-imports` 的 `summarizeHostProbe`），于是**前两个提交单独 checkout 是编译不过的** ——
+`git bisect` 会停在坏点上。
+
+判据：**`git worktree add --detach <sha>` 后 `npm ci` + `npm run check` + `npm test` +
+`npm run typecheck` 全绿。** 不满足就把该提交与它所依赖的改动合并（宁可提交变大）。
+
+> 推论：被多个提交"穿"到的文件（本仓库最典型的是 `index.impl.js`）会把相关改动**绑成一个提交**。
+> 想切细，就得先把这类文件里的关注点拆开 —— 那是重构任务，不是提交技巧。
+
+### 不能提交的东西
+
+- `docs/architecture/*.visual-check.*.png` 与 `*.visual-check.html`：**可再生**的副产物
+  （`node bin/archify.mjs visual-check docs/architecture/system.html`），已在 `.gitignore`。
+  规格（`*.architecture.json`）、交付物（`*.html`）、回执（`*.visual-check.json`）才提交。
+- `tmp/**`（含会话日志明文）、`tools/.install-state.json`、任何 `*.bak-*`。
+
+### 已知的发布后遗留（v0.2.0）
+
+- **ISSUE-13**：`<stateDir>/trace.log` 记录引擎工具调用**原标题**，含 token 与明文密码 ——
+  唯一"已在产生真实影响"的未修项。
+- `client.js` 不做文件级拆分（ADR-0005 补记）；本机 profile 的 `cordis.patch.yml` 含明文凭据，
+  **永不入库**。
