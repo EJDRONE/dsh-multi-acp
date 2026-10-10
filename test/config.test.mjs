@@ -37,6 +37,7 @@ test('config: DEFAULT_CONFIG 的值必须与文档/README 一致（改这里等�
     promptTimeoutMs: 300000,
     idleTimeoutMs: 180000,
     permissionModeFromSession: true,
+    trace: true,
   })
 })
 
@@ -143,4 +144,34 @@ test('config: schema 若存在，必须拒绝真正写错类型（而不是照�
   if (!Config) return // 宿主 schemastery 缺席时跳过（CI 无 profile 情况下合法）
   assert.throws(() => Config({ promptTimeoutMs: {} }))
   assert.throws(() => Config({ engines: 'not-an-array' }))
+})
+
+test('config: trace 开关归一化（ISSUE-13）—— false/off 关，路径改道，其余默认', () => {
+  const t = (raw) => (raw === undefined ? normalizeConfig({}).config : normalizeConfig({ trace: raw }).config).trace
+
+  // 默认：写默认路径
+  assert.deepEqual(t(), { enabled: true, file: null })
+  assert.deepEqual(t(true), { enabled: true, file: null })
+
+  // 关闭的几种写法（用户可能填 'off' / 空串）
+  for (const off of [false, 'off', 'OFF', '0', '', '  ']) {
+    assert.deepEqual(t(off), { enabled: false, file: null }, `${JSON.stringify(off)} 应当关闭 trace`)
+  }
+
+  // 改道：非空字符串即路径
+  assert.deepEqual(t('D:/tmp/a.log'), { enabled: true, file: 'D:/tmp/a.log' })
+  assert.deepEqual(t('  D:/tmp/b.log  '), { enabled: true, file: 'D:/tmp/b.log' }, '路径要 trim')
+
+  // 类型不对时不炸，回默认（插件入口不得抛 —— ADR-0004）
+  assert.deepEqual(t(42), { enabled: true, file: null })
+  assert.deepEqual(t({ nope: 1 }), { enabled: true, file: null })
+})
+
+test('config: 默认配置本身就是合法输入（DEFAULT_CONFIG 必须能被 normalize 原样吃下）', () => {
+  const { config } = normalizeConfig(DEFAULT_CONFIG)
+  assert.deepEqual(config.trace, { enabled: true, file: null })
+  if (Config) {
+    const validated = Config(DEFAULT_CONFIG)
+    assert.equal(validated.trace, true, 'schema 默认值必须与 DEFAULT_CONFIG.trace 一致')
+  }
 })

@@ -6,7 +6,7 @@
 > 设计核心：**引擎是数据行，不是代码** —— 新增一个引擎 = 加一行配置。
 
 - **目标宿主**：DSH Desktop 0.2.0-rc.2（`DSH_HOME = D:\Ecode\.dsh`，profile = `desktop`）
-- **当前版本**：**0.2.0**（2026-10-10）
+- **当前版本**：**0.2.1**（2026-10-10）
 - **状态**：🟢 **端到端跑通，并已在 DSH 内完成真实会话验证**（引擎路由 / preset 工具面 / MCP 注入 / 工具回显 / 引擎命令回显 / 引擎管理 UI）
 - **实测可用的引擎**：omp · Qoder CLI CN（`--acp`）· OpenCode · Command Code —— 四家 ACP 往返 + MCP 注入均已验证（见文末"引擎环境事实"）
 - **文档**：**[AI 开发约束（AGENTS.md）](./AGENTS.md)** · **[术语表（CONTEXT.md）](./CONTEXT.md)** · **[决策记录（ADR）](./docs/adr/)** · [架构图](./docs/architecture/system.html) · [设计](./docs/DESIGN.md) · [引擎规格](./docs/ENGINE-SPEC.md) · [验证方案](./docs/VERIFICATION.md) · [UI 设计](./docs/UI-DESIGN.md) · [ACP 集成](./docs/ACP-INTEGRATION.md) · [问题清单](./docs/ISSUES.md) · [路线图](./docs/ROADMAP.md) · [证据](./docs/evidence/) · [变更日志](./CHANGELOG.md)
@@ -106,6 +106,18 @@ dsh_multi_acp/
 | `unsandboxedFs` | `false` | `true` = 用 entry-local `dsh-fs-local` 遮蔽宿主沙箱 fs（写工作区外不再被拒） |
 | `mcp` | `{enabled:true, include:[], exclude:[]}` | MCP 随会话下发策略（见下） |
 | `promptTimeoutMs` | `300000` | 一次 `session/prompt` 的超时；**`<=0` = 不超时**（长任务推荐） |
+| `trace` | `true` | 诊断追踪 `<stateDir>/trace.log`。`false`/`'off'` = **关闭**；`'<path>'` = 改道。**落盘前一律中央脱敏**（见下） |
+
+**诊断追踪与脱敏**（`lib/trace.js`，v0.2.1 / ISSUE-13）：trace 是排查"factory 有没有装上、preset 注册了没、
+引擎走了哪条分支"的主要证据来源，但它落在 `DSH_HOME` 下、又是最容易被贴进 issue 的文件，
+所以它是本插件**唯一**的落盘收口点，写之前一律脱敏：
+
+- **按键名**：`token` / `secret` / `password` / `apiKey` / `authorization` / `bearer` / `credential` / `cookie`
+  → 整值 `<redacted>`（`sessionId` **故意不在其列** —— 它是诊断主键）；
+- **按值的形状**：`sk-…` / `mcp_…` / `gh?…` / `AKIA…` / PEM 私钥 / JWT / `Bearer …` /
+  自由文本里的 `token=…`、`--password …`、`密码 <值>` / **邮箱 → `<email>`**；
+- **上限**：单字符串 300 字符截断、6 层深、40 字段宽（防整篇 prompt 落盘）；
+- **工具调用标题不记正文**（只记 `titleLen`）—— 正文里的凭据实测存在，需要正文时看**会话日志**。
 
 **引擎来源优先级**（`lib/engines.js`）：内置 `BUILTIN` → `<stateDir>/engines.json` → 插件 `config.engines`。
 按 `id` 整体覆盖（不做深合并，避免半覆盖导致意外）。引擎行还可单独设 `mcp`（`'inherit'`/`'none'`/自定义数组）

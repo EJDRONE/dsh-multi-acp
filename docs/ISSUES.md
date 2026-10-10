@@ -16,7 +16,7 @@
 
 > 来源：按官方 + 社区规范做的一轮合规核查与重构（v0.2.0）。条目编号接原有序列。
 
-### 🔴 ISSUE-13 · `trace.log` 记录引擎工具调用**原标题**，其中含凭据明文
+### 🔴 ISSUE-13 · `trace.log` 记录引擎工具调用**原标题**，其中含凭据明文（**已修**）
 
 - **现象**：`<stateDir>/trace.log`（实测本机 307KB）把 ACP 引擎的工具调用标题**原样落盘**。
   实测内容里含 WeKnora 的 `mcp_jcYs9xt7…` token、`sk-8Nwp9HTD…` API key、
@@ -24,25 +24,60 @@
 - **证据**：`D:\Ecode\.dsh\multi-acp\trace.log` 中 `acp.tool-call` 事件的 `data.title` 字段。
 - **影响**：该文件在 `DSH_HOME` 下（**不在仓库里**，`.gitignore` 也挡不住它本身），
   但它是**本插件自己写的状态文件** → 属凭据泄露面。用户分享日志排查问题时必然泄露。
-- **修复方向（未执行）**：① trace 只记**元数据**（工具名、耗时、字节数），不记标题正文；
-  ② 对可能含值的内容做脱敏（token/key/密码形态）；③ 提供关闭开关（如 `trace: false`）。
-  **优先级高于本文件其它条目** —— 它已经在真实产生泄露。
+- **已修（v0.2.1）** —— 三条修复方向**全部**落地，且是"收口点 + 调用方 + 开关"三层一起：
+  1. **中央脱敏（收口点）**：`lib/trace.js` 的 `trace()` 落盘前一律过 `redact()`：
+     - **按键名**：`token|secret|password|passwd|api[-_]?key|apikey|authorization|bearer|credential|cookie`
+       → 整值 `<redacted>`（**故意不含 `sessionId`** —— 那是诊断主键，不是凭据）；
+     - **按值的形状**：`sk-…` / `mcp_…` / `gh?…` / `xox…` / `AKIA…` / PEM 私钥 / JWT /
+       `Bearer …` / 自由文本里的 `key=value`、`--flag value`、`密码 <值>` / **邮箱 → `<email>`**；
+     - **超长字符串截断**到 300 字符 + 深度 6 层、宽 40 字段的上限（防整篇 prompt 落盘）。
+     因为是**唯一落盘点**，未来的新调用方即使误传敏感字段也过不去 —— 这是纵深防御，
+     不是"调用方小心点"。
+  2. **调用方**：`acp.tool-call` **不再记 `title`**，改记 `titleLen`（`lib/acp-turn-runner.js`）。
+     需要标题正文时从**会话日志**取（那是产品自己的记录，本来就含工具回显）。
+  3. **开关**：新增插件配置 **`trace`**（`true` 默认 / `false`·`'off'` 关闭 / `'<path>'` 改道）。
+     **Desktop 用户改不了环境变量**（从快捷方式启动），所以配置是唯一可及开关；
+     环境变量 `DSH_MULTI_ACP_TRACE` 仍可用，优先级：config > env > 默认。
+  4. 测试：`test/trace-redaction.test.mjs`（7 例）—— 含"**真实泄漏形状**"用例（用**合成替身**，
+     仓库内绝不出现真凭据，AGENTS.md §8）与"非敏感字段必须原样保留"（脱敏不能毁掉诊断能力）。
+- ⚠️ **历史文件仍须处置（修复只挡住新写入）**：本机
+  `<stateDir>/trace.log.bak-20261010-105701-pre-issue13`（464KB / 1725 行）实测仍含
+  **196 条 `title`，其中 4 个 `mcp_` token、6 个 `sk-` key、2 个邮箱**。
+  它是**用户自己的备份**，本插件不擅自改写或删除 —— 建议：删掉该备份，并**轮换**那些 key/token
+  （它们已以明文存在于磁盘上）。现存 `trace.log` 已核对：5 条遗留 title 均为 9 字符、无凭据形状。
 
-### 🟠 ISSUE-14 · 宿主包解析在**宿主外**指向旧版本线（已加护栏，未根治）
 
-- **现象**：`profiles/node_modules/@deepseek-ai/*`（244 条）是指向**全局 npm 安装**的绝对路径
-  链接 → 实测解析到 `dsh-agent/dsh-session/dsh-tools = 0.1.1-rc.2`，而宿主是 `0.2.0-rc.2`。
+### 🟠 ISSUE-14 · 宿主包解析在**宿主外**指向旧版本线（**已测量 + 已护栏**，未根治）
+
+- **现象**：`<DSH_HOME>/profiles/node_modules/@deepseek-ai/*`（244 条）是指向**全局 npm 安装**的
+  绝对路径链接 → 实测解析到 `dsh-agent/dsh-session/dsh-scope/dsh-llm = 0.1.1-rc.2`，
+  而宿主是 `0.2.0-rc.2`。
 - **后果实例**：`probeHostSymbols()` 在裸 node 下报 `dsh-llm 缺 AssistantStreamAccumulator`
   —— **假阴性**（该符号在 0.2.0-rc.2 里由 `export * from './assistant-stream.ts'` 提供）。
   宿主内实测 `factory.createAgent.contract` = `ok:true` ×12/12，**真实会话不受影响**；
   受影响的是**验证工具本身的结论可信度**。
-- **已做**：探测报告一律带 `resolved`/`version`/`expected`/`trustHost`；
-  新增 `scripts/diagnose-host-resolution.mjs`（退出码 0/1/2 = 一致 / 不一致 / 无法判定）。
+- **已做（护栏）**：探测报告一律带 `resolved`/`version`/`expected`/`trustHost`；
+  `scripts/diagnose-host-resolution.mjs`（退出码 0/1/2 = 一致 / 不一致 / 无法判定）。
   见 ADR-0003。
-- **未做（**建议先测量再决定**）**：不手工改那棵树（DSH 维护、40+ 插件共享）。
-  待确认的是「宿主外到底谁在用它」。
-- **潜在断点**：那棵树的链接**硬绑定到 `nvm\v22.20.0`**，而 active 是 `v24.21.0`。
-  `nvm use` 换版本会让整棵树悬空 —— 这正是 `B0-ui-contract-findings.md` §5 曾记录的状态。
+- **已做（测量，2026-10-10 · v0.2.1）**：诊断脚本新增「回退树审计」段（`--json` → `fallbackTrees`），
+  实测（本机，`--expect 0.2.0-rc.2`）：
+
+  | 树 | 顶层条目 | `@deepseek-ai` | 其中链接 | 悬空 | 过期 |
+  |---|---|---|---|---|---|
+  | `<profile>/node_modules` | 404 | 3 | 0 | 0 | 3 |
+  | `<DSH_HOME>/profiles/node_modules`（**共享**） | 200 | 244 | **244** | **47** | 197 |
+
+  - 真正提供旧版宿主包的是**共享树**，不是 profile 本地那 3 条（后者是 3 个实目录，零链接）。
+  - 本仓库**实际会解析到**且过期的：`cordis`、`dsh-agent`、`dsh-llm`、`dsh-scope`、
+    `dsh-session`、`schemastery`（6 个）→ 护栏保护的正是这 6 个。
+  - 244 条链接**钉死在 nvm `v22.20.0`**，本机 active 是 `v24.21.0`。
+- **对旧假设的修正**：原文写「`nvm use` 换版本**会**让整棵树悬空」—— 实测**不必换版本**：
+  244 条里**已经悬空 47 条**（样本：`dsh-acp`、`dsh-acp-app`、`dsh-api-*`、`dsh-chunked-list`、
+  `dsh-client-file-upload` …），即那些链接的目标在钉死的 v22.20.0 全局树里**本来就不存在**。
+  失败形态是"**已经部分悬空**"，不是"换个 nvm 版本才悬空"。
+- **未测**：这 47 个名字是否被任何**已装插件**消费（属宿主 loader 领域，且 ADR-0003 明确
+  「不要手工改那棵树」）。**本仓库自己的解析路径不受影响** —— 上面那 6 个全部可解析。
+- **处置**：不手工改那棵树（DSH 维护、40+ 插件共享）。护栏 + 本段测量 = 当前全部动作。
 
 ### 🟡 ISSUE-15 · 自带 patch 里的 `idleDisposeMs` / `disposeGraceMs` 是死配置（**已修**）
 
@@ -93,7 +128,7 @@
 正确表述应为：**"指向全局安装的绝对路径链接，内容随环境漂移；宿主内解析正确，
 宿主外解析到旧版本"**。结论与处置见 ADR-0003。
 
-### 🟡 ISSUE-17 · `createCallbackSink` 的 `rawLines` 是一个**半接线的诊断钩子**
+### 🟡 ISSUE-17 · `createCallbackSink` 的 `rawLines` 是一个**半接线的诊断钩子**（**已修**）
 
 - **现象**：`lib/acp-client.js` 的 `createCallbackSink({ …, rawLines })` 里有一句
   `rawLines?.recordCallback?.(String(prop), args)` —— 也就是说它期望一个
@@ -104,13 +139,23 @@
   且 `capabilities().rawLineCount` 反映的不是回调数。
 - **证据**：`lib/acp-client.js:40`（签名）、`:73`（唯一一处 `recordCallback` 引用）、
   `:97`（`this.rawLines = []`）、`:162`（另一条路径 push）。
-- **性质**：**不是坏**，是"没做完"。当前被显式标为可选参数（类型检查通过），
+- **性质**：**不是坏**，是"没做完"。改造时被显式标为可选参数（类型检查通过），
   并在注释里写明了事实，不再假装它在工作。
-- **修复方向（未执行）**：二选一 ——
-  ① 接线：让 `AcpClient` 传一个 `{ recordCallback(name, args) { … push 进诊断 } }`，
-     于是 `rawLines` 真的能反映引擎回调序列（对排查"引擎到底发了什么"很有用）；
-  ② 删除：连同那个参数与那一行一起删掉（它是仓库里唯一引用 `recordCallback` 的地方）。
-  **倾向 ①**，因为排查引擎异常时"引擎发过哪些回调"是高频需求。
+- **已修（v0.2.1）** —— 取**方向 ①（接线）**，且发现断的不止一处、而是**两端都断**：
+  - 补充实测：`AcpClient._sinkCounts` **创建后从未被写入或读取**；
+    `sink.counts`（那个 `seen` Map）**零读者**。所以整条"客户端回调计数"通道
+    是**建造但未连接**，不只是那一个 phantom 参数。
+  - 接线：未知回调改为计入同一张 `seen` 表，键名沿用既有惯例 →
+    `unknown:<回调名>`（与 `sessionUpdate:<类型>` 并列）。**只记名字与次数，不记 args**
+    （args 可能含凭据 —— 与 ISSUE-13 同一条原则）。
+  - 出口：`AcpClient` 持 `counts` 的**活引用**（`this._sinkCounts = counts`），
+    经 `capabilities().callbacks` 暴露 → `AcpHost.tryConnect` 的试连报告 →
+    `GET /engines` 的能力快照（`lib/routes.js`，显式加进白名单，避免又被静默丢弃）。
+  - phantom 参数 `rawLines` 已从签名与 JSDoc 中**删除**；`createCallbackSink` 改为导出
+    （仅供测试与诊断复用），使这条行为有真正的测试：`test/acp-callback-sink.test.mjs`（7 例，
+    其中 2 例钉住**安全默认** —— 无 `onPermission` 必须拒绝、无 fs handler 必须如实回空并记警告）。
+  - 未做（**有意**）：UI 未单独渲染这段计数。数据已在 API 面上，渲染是产品选择；
+    不为了让数据"看起来被用上"而顺手改 1287 行的客户端 bundle。
 
 ### 🔴 ISSUE-18 · 诊断数据被自己的测试污染（**已修**）
 

@@ -63,3 +63,11 @@
         #                【工作区内修改】/【仅可查看】沿用引擎行设置并打告警。
         #   false：完全不介入，只用引擎行自己的 permissionMode。
         permissionModeFromSession: true
+        # 诊断追踪（v0.2.1 / ISSUE-13）：<stateDir>/trace.log —— 排查"factory 装上没 / preset 注册没 /
+        # 走了哪条降级分支"的主要证据。
+        #   true（默认）= 写默认路径；false / 'off' = **关闭**；'<path>' = 改道到该路径。
+        # 为什么要有这个开关：Desktop 从快捷方式启动，用户改不了它的环境变量，配置是唯一可及的开关。
+        # 落盘前一律过 lib/trace.js 的中央脱敏（按键名 + 按值的形状 + 截断），但**关掉它最干净**。
+        # ⚠️ 若本机 profile 的 patch 整体替换了 config（ISSUE-16），本行不会生效 —— 那时用
+        #    插件配置面板或环境变量 DSH_MULTI_ACP_TRACE。
+        trace: true

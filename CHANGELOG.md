@@ -1,5 +1,87 @@
 # CHANGELOG
 
+## 0.2.1 — 2026-10-10 🔐 **堵住 trace 凭据泄露**（ISSUE-13）+ 接通回调诊断（ISSUE-17）+ 回退树实测（ISSUE-14）
+
+三条都来自 `docs/ISSUES.md`「规范化一轮」的记录，**其中第一条是已在真实产生泄露的安全问题**。
+
+### 1. 🔴 ISSUE-13 · `trace.log` 不再记录引擎工具调用的原标题（**安全修复**）
+
+- **问题**：`<stateDir>/trace.log` 把 ACP 引擎的工具调用**标题原文**落盘，实测含 `mcp_…` token、
+  `sk-…` API key、账号邮箱与明文密码。这是"出问题就贴进 issue"的那种文件 → 用户分享日志即泄露。
+- **修复（三层，缺一层都不够）**：
+  1. **中央脱敏（唯一落盘点）**：`lib/trace.js` 的 `trace()` 写盘前一律过 `redact()` ——
+     按**键名**（`token`/`secret`/`password`/`apiKey`/`authorization`/`bearer`/`credential`/`cookie`
+     → 整值 `<redacted>`；`sessionId` **故意不在其列**，它是诊断主键）、
+     按**值的形状**（`sk-…`/`mcp_…`/`gh?…`/`xox…`/`AKIA…`/PEM/JWT/`Bearer …`/
+     自由文本里的 `token=…`·`--password …`·`密码 <值>`/**邮箱 → `<email>`**）、
+     以及**长度上限**（单串 300 字符、6 层深、40 字段宽）。
+     放在收口点而不是调用方，是为了让"下一个忘了脱敏的调用方"也过不去。
+  2. **调用方**：`acp.tool-call` 不再记 `title`，改记 **`titleLen`**（`lib/acp-turn-runner.js`）。
+     需要标题正文时看**会话日志**（产品自己的记录）。
+  3. **开关**：新增插件配置 **`trace`** = `true`(默认) / `false`·`'off'` / `'<path>'`。
+     **Desktop 用户改不了环境变量**（从快捷方式启动），所以配置是唯一可及开关；
+     `DSH_MULTI_ACP_TRACE` 仍生效，优先级 config > env > 默认。
+- **新测试**：`test/trace-redaction.test.mjs`（7 例）—— 含"**真实泄漏形状**"用例与
+  "非敏感字段必须原样保留"（脱敏不得毁掉诊断能力）。凭据一律用**合成替身**（AGENTS.md §8）。
+- ⚠️ **历史文件须自行处置**（修复只挡新写入）：本机
+  `trace.log.bak-20261010-105701-pre-issue13`（464KB）仍含 196 条 `title`，
+  其中 **4 个 `mcp_` token / 6 个 `sk-` key / 2 个邮箱**。它是**用户的备份**，
+  本插件不擅自动它 —— 建议删除并**轮换**那些 key。现存 `trace.log` 已核对为干净（5 条遗留 title
+  均 9 字符、无凭据形状）。
+
+### 2. 🟡 ISSUE-17 · "客户端回调计数"从**两端都断**改为接通
+
+- **补测发现**：不只是那个 phantom 的 `rawLines.recordCallback` ——
+  `AcpClient._sinkCounts` **创建后从未被读写**，`sink.counts` 也**零读者**。
+  整条通道是"建造但未连接"。
+- **接线**：未知回调计入同一张表 → `unknown:<回调名>`（与既有 `sessionUpdate:<类型>` 并列），
+  **只记名字与次数、不记 args**（args 可能含凭据）。`AcpClient` 持**活引用**，
+  经 `capabilities().callbacks` → `tryConnect` 试连报告 → `GET /engines` 能力快照
+  （`lib/routes.js` 显式加进白名单，避免又被静默丢弃）。
+- phantom 参数 `rawLines` 已从签名与 JSDoc 删除；`createCallbackSink` 改为导出（仅供测试/诊断），
+  新增 `test/acp-callback-sink.test.mjs`（7 例，其中 2 例钉住**安全默认**：
+  无 `onPermission` 必须拒绝、无 fs handler 必须如实回空并记警告）。
+- **有意未做**：UI 未单独渲染这段计数（数据已在 API 面上，渲染是产品选择，不为"看起来被用上"改 UI）。
+
+### 3. 🟠 ISSUE-14 · 宿主外回退树：**实测推翻了 Issue 里的假设**
+
+诊断脚本新增「回退树审计」段（`--json` → `fallbackTrees`）。实测（本机，`--expect 0.2.0-rc.2`）：
+
+| 树 | 顶层条目 | `@deepseek-ai` | 链接 | 悬空 | 过期 |
+|---|---|---|---|---|---|
+| `<profile>/node_modules` | 404 | 3 | 0 | 0 | 3 |
+| `<DSH_HOME>/profiles/node_modules`（共享） | 200 | 244 | **244** | **47** | 197 |
+
+- 旧版宿主包来自**共享树**（不是 profile 本地那 3 条实目录）；
+  本仓库**实际会解析到**且过期的只有 6 个：`cordis` `dsh-agent` `dsh-llm` `dsh-scope`
+  `dsh-session` `schemastery` —— 护栏保护的正是这 6 个。
+- **推翻**：「`nvm use` 换版本**会**让树悬空」是假设；实测**不必换版本**，244 条里**已悬空 47 条**
+  （`dsh-acp`、`dsh-api-*`、`dsh-chunked-list` …）。链接钉死在 nvm `v22.20.0`，active 是 `v24.21.0`。
+- **未测**（明确标注）：那 47 个名字是否被任何已装插件消费（宿主 loader 领域，ADR-0003 禁止手工改树）。
+  本仓库自身解析路径不受影响。
+- 处置仍是"**不手工改那棵树**"（DSH 维护、40+ 插件共享）—— 本轮只增加**测量能力**。
+
+### 4. 文档与配置面
+
+- `README.md`：配置表新增 `trace` 行 + 「诊断追踪与脱敏」小节（脱敏口径写全）。
+- `CONTEXT.md`：新增术语 **回退树（Fallback Tree）**，新增 **§六 安全**（中央脱敏 / 诊断开关）。
+- `cordis.patch.yml`：按同文件既有风格注明 `trace` 开关与其在两个 nvm/patch 场景下的注意事项。
+
+### 5. 验证
+
+- `npm test` **84/84**（新增 16 例：sink 7 + 脱敏 7 + 配置 2）；`npm run check` 通过；
+  `npm run typecheck` **0 错误**（CI 阻断项）。
+- **真实会话证据**（AGENTS.md §3）：宿主 `apply.enter` + `install.factory-installed` 见
+  `2026-10-10T06:28:44Z`（= 本机 14:28:44，与 `load-report.txt` 一致）→ 运行实例已是本版代码；
+  随后真实 **omp** 会话 `session-65c90bfa-e3d1-4438-b75e-58f7a0549766`（4 个 MCP 继承、
+  权限档 `workspace-write-asks`）在 `06:36–06:40Z` 产生 **7 次 `acp.tool-call`**
+  （`kind`=read/search/execute），trace 里是 **`titleLen`=46/39/49/37/37/87/112**、**无 `title`**
+  —— 即"只记元数据"在真机上生效。
+- 另做**真实数据回放**：把本机 136 行真实 `trace.log` 逐行过一遍新 `trace()` →
+  **0 个字段被改动**（证明脱敏不破坏诊断）；现存 trace 里凭据形状计数 = 0。
+- 硬链接同步：`tools/install.ps1 -Sync` 已跑；逐文件核对 repo ↔ 安装副本**同 inode 同内容**
+  （`lib/*` + `package.json` + `cordis.patch.yml`），安装副本版本 = **0.2.1**。
+
 ## 0.2.0 — 2026-10-10 🧱 **规范化：按官方 + 社区规范重构，并补上 AI 开发约束与决策记录**
 
 用户要求「遵循 dsh 官方教程与社区插件开发规范，构建规范文档、重构项目代码」。

@@ -30,9 +30,13 @@
  *   0 = 解析到的 dsh 版本 == 宿主版本（结论**可用于验收**）
  *   1 = 不一致（结论不可用于验收 —— 这是"宿主外跑验证脚本"的常态）
  *   2 = 无法判定（宿主版本未知：裸 node 且未给 --expect）
+ *
+ * 另有一段**宿主外回退树审计**（ISSUE-14）：枚举整棵 `profiles/node_modules/@deepseek-ai`，
+ * 报告条目数 / 悬空链接 / 过期包 / **其中本仓库会解析到的** / nvm 硬绑定。
+ * 它**只测量、不处置，且不影响退出码**（那棵树由 DSH 维护，见 ADR-0003）。
  */
 
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, realpathSync, lstatSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import {
   hostResolveAnchor,
@@ -73,8 +77,126 @@ function desktopRuntime() {
 
 const runtime = desktopRuntime()
 const expected = expectedHostVersion()
+
+/** nvm 版本目录（`…\nvm\v22.20.0\…`）—— 解析链可能**钉死**在某个版本上。 */
+const NVM_VERSION_RE = /[\\/](v\d+\.\d+\.\d+)[\\/]/
+
+/**
+ * 审计一棵 `node_modules/@deepseek-ai`。
+ *
+ * @param {string} nm `…/node_modules`
+ * @param {string | undefined} expectedVersion 宿主版本基准
+ * @param {Set<string>} consumed 本仓库会解析的包名集合
+ */
+function auditTree(nm, expectedVersion, consumed) {
+  const root = join(nm, '@deepseek-ai')
+  if (!existsSync(root)) return { nm, root, present: false }
+
+  /** @type {{name:string,kind:string,target:string|null,version?:string,dangling:boolean}[]} */
+  const entries = []
+  let names
+  try {
+    names = readdirSync(root, { withFileTypes: true })
+      .filter((d) => d.isDirectory() || d.isSymbolicLink())
+      .map((d) => d.name)
+  } catch (error) {
+    return { nm, root, present: true, error: String(/** @type {any} */ (error)?.message ?? error) }
+  }
+
+  for (const name of names) {
+    const link = join(root, name)
+    let kind = 'dir'
+    try {
+      kind = lstatSync(link).isSymbolicLink() ? 'link' : 'dir'
+    } catch {
+      kind = 'gone'
+    }
+    let target = null
+    try {
+      // realpath 会跟着 junction/symlink 走；目标不存在 → 抛 → 视为悬空。
+      target = realpathSync(link)
+    } catch {
+      target = null
+    }
+    let version
+    if (target) {
+      try {
+        version = JSON.parse(readFileSync(join(target, 'package.json'), 'utf8')).version
+      } catch {
+        version = undefined
+      }
+    }
+    entries.push({ name, kind, target, version, dangling: target === null })
+  }
+
+  const stale = entries.filter(
+    (e) => expectedVersion !== undefined && e.version !== undefined && e.version !== expectedVersion,
+  )
+  let totalInNm = 0
+  try {
+    totalInNm = readdirSync(nm).length
+  } catch {
+    totalInNm = 0
+  }
+  return {
+    nm,
+    root,
+    present: true,
+    /** 该 node_modules 的**顶层条目数**（`profiles/node_modules` 上有近 250 条）。 */
+    totalInNm,
+    total: entries.length,
+    links: entries.filter((e) => e.kind === 'link').length,
+    resolvable: entries.filter((e) => e.target).length,
+    dangling: entries.filter((e) => e.dangling).length,
+    danglingSample: entries.filter((e) => e.dangling).slice(0, 8).map((e) => e.name),
+    stale: stale.length,
+    staleSample: stale.slice(0, 12).map((e) => `${e.name}@${e.version}`),
+    /** 影响面：本仓库会解析到的那些包里，有多少是过期的。 */
+    consumedStale: stale.filter((e) => consumed.has(`@deepseek-ai/${e.name}`)).map((e) => e.name),
+    versions: [...new Set(entries.map((e) => e.version).filter(Boolean))].sort(),
+    nvmTargets: [...new Set(entries.map((e) => NVM_VERSION_RE.exec(e.target ?? '')?.[1]).filter(Boolean))],
+  }
+}
+
+/**
+ * 回退树的整体审计（ISSUE-14 的测量段）。
+ *
+ * **关键区分**（实测 2026-10-10，本轮修正）：`profiles/node_modules/@deepseek-ai` 只有 3 条
+ * **实目录**、零链接；真正提供旧版宿主包的是**上一级的共享树** `profiles/node_modules`
+ * （40+ 插件共享，见 ADR-0003）→ 解析链落到 nvm 全局安装的嵌套依赖里。所以要**两棵都扫**。
+ *
+ * nvm 绑定不看树内条目，而看**解析结果**：路径里带版本号，钉死在哪一个 nvm 版本上。
+ */
+function auditFallbackTrees(anchor, expectedVersion, consumed, resolvedPaths) {
+  const profileNm = join(anchor, 'node_modules')
+  // DSH_HOME/profiles/node_modules —— 插件共享的扁平树（ADR-0003）。
+  const sharedNm = join(dirname(anchor), 'node_modules')
+  const trees = [profileNm, sharedNm]
+    .filter((nm, i, all) => all.indexOf(nm) === i && existsSync(nm))
+    .map((nm) => auditTree(nm, expectedVersion, consumed))
+
+  const nvmVersionsInResolution = [
+    ...new Set(resolvedPaths.map((p) => NVM_VERSION_RE.exec(p)?.[1]).filter(Boolean)),
+  ]
+  return {
+    trees,
+    /** 解析链钉死在哪个 nvm 版本（来自解析结果，不是树内条目）。 */
+    nvmVersionsInResolution,
+    activeNodeVersion: process.version,
+    /** 解析链的 nvm 版本 ≠ 本进程 → 你一直在用**另一个版本**装的全局包。 */
+    resolvedFromOtherNvm: nvmVersionsInResolution.length > 0 && !nvmVersionsInResolution.includes(process.version),
+  }
+}
+
 const resolved = PACKAGES.map((specifier) => ({ specifier, ...resolveHostPackage(specifier) }))
 const symbols = await probeHostSymbols()
+const consumed = new Set([...PACKAGES, ...symbols.map((s) => s.pkg)])
+const fallbackTrees = auditFallbackTrees(
+  hostResolveAnchor(),
+  expected.version,
+  consumed,
+  resolved.filter((r) => r.resolved).map((r) => /** @type {string} */ (r.resolved)),
+)
 
 const dshResolved = resolved.filter((r) => DSH_FAMILY.test(r.specifier))
 const unresolved = resolved.filter((r) => !r.ok)
@@ -95,6 +217,7 @@ const report = {
   desktopRuntime: runtime,
   expectedHostVersion: expected,
   resolved,
+  fallbackTrees,
   dshVersionsResolved: dshVersions,
   selfConsistent,
   symbols,
@@ -139,6 +262,42 @@ for (const s of symbols) {
   )
 }
 line()
+
+if (fallbackTrees.trees.length > 0) {
+  line('  宿主外回退树审计（ISSUE-14 的测量段 —— 只测量、不处置）：')
+  for (const t of fallbackTrees.trees) {
+    if (!t.present) continue
+    line(`    ${t.nm}`)
+    line(
+      `      顶层条目 ${t.totalInNm} · @deepseek-ai ${t.total}（链接 ${t.links}）` +
+        ` · 可解析 ${t.resolvable} · 悬空 ${t.dangling}` +
+        (expected.version !== undefined ? ` · 过期 ${t.stale}` : ''),
+    )
+    if (t.versions.length > 0) {
+      const shown = t.versions.slice(0, 6)
+      line(
+        `      版本：${shown.join(', ')}` +
+          (t.versions.length > shown.length ? ` …（共 ${t.versions.length} 种）` : ''),
+      )
+    }
+    if (t.staleSample.length > 0) line(`      过期样本：${t.staleSample.join(', ')}`)
+    if (t.danglingSample.length > 0) line(`      ⚠️ 悬空样本：${t.danglingSample.join(', ')}`)
+    if (t.consumedStale.length > 0) {
+      line(`      ⚠️ 其中**本仓库会解析到**的过期包 ${t.consumedStale.length} 个：${t.consumedStale.join(', ')}`)
+    }
+    if (t.nvmTargets.length > 0) line(`      树内链接指向 nvm：${t.nvmTargets.join(', ')}`)
+  }
+  const nvm = fallbackTrees.nvmVersionsInResolution
+  line(
+    `    解析链的 nvm 绑定：${nvm.join(', ') || '(不在 nvm 版本目录下)'}；本进程 ${fallbackTrees.activeNodeVersion}` +
+      (fallbackTrees.resolvedFromOtherNvm
+        ? '  ⚠️ 不一致 —— 解析到的是**另一个 nvm 版本**装的全局包（钉死带版本号的绝对路径，' +
+          '换版本不会悬空，但会一直用错的那一份）'
+        : '  ✓ 一致'),
+  )
+  line('    说明：这些树由 **DSH 维护**、40+ 插件共享，本插件**从不写它**（ADR-0003）。')
+  line()
+}
 
 if (ok) {
   line(`结论：解析到的 dsh ${dshVersions.join(', ')} == 宿主 ${expected.version} —— 本进程内的宿主契约结论**可用于验收**。`)
